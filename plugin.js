@@ -104,9 +104,16 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 	
 	<title>Light Control</title>
 	<h1>Light Control</h1>
-    		<button type="button">Left Light</button>
-    		<button type="button">Right Light</button>
-		<button type="button">Emergency</button>
+    		<button type="button" id="btn" onclick="changeContent("turn left")">Left Light</button>
+    		<button type="button" id="btn" onclick="changeContent("turn right")">Right Light</button>
+		<button type="button" id="btn" onclick="changeContent("go fast")">Emergency</button>
+	<script>
+        function changeContent(mess) {
+            var heading = document.getElementById('cnt');
+            heading.innerHTML = mess;
+        }
+    	</script>
+	<p>You want to : <span  id="cnt">...<\span></p>
 	`
 	let leftBtn = control.querySelector("#left-light")
 	let rightBtn = control.querySelector("#right-light")
