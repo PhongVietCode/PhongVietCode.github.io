@@ -104,8 +104,9 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 	
 	<title>Light Control</title>
 	<h1>Light Control</h1>
-    <button type="button">Left Light</button>
-    <button type="button">Right Light</button>
+    		<button type="button">Left Light</button>
+    		<button type="button">Right Light</button>
+		<button type="button">Emergency</button>
 	`
 	let leftBtn = control.querySelector("#left-light")
 	let rightBtn = control.querySelector("#right-light")
