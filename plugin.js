@@ -1,7 +1,7 @@
 import StatusTable from "./reusable/StatusTable.js"
 import { PLUGINS_APIKEY } from "./reusable/apikey.js";
 import loadScript from "./reusable/loadScript.js";
-import "./socket.io/client-dist/socket.io.js";
+import "./node_modules/socket.io/client-dist/socket.io.js";
 const API_HOST = "https://app.digitalauto.tech"
 
 // socket.io init ----------------------
