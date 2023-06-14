@@ -11,9 +11,9 @@ const socket = io('http://127.0.0.1:3000');
 let initialCenter = {lat:0, lng:0};
 let nearbyCar = new Map();
 let haveMarker = false; // cho nay co the sai
-
-
-
+var maxSpeed = 100;
+let currentInformation = {};
+let haveWriteCurrentLocation = false;
 // ggmap -----------------------
 const GoogleMapsLocation = async (apikey, box, initialCenter, {icon = null} = {}) => {
     await loadScript(box.window, `https://maps.googleapis.com/maps/api/js?key=${apikey}`);
@@ -32,6 +32,11 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, {icon = null} = {}
 	};
 	socket.on("marker", (location) => {
 		initialCenter = location;
+		if (haveWriteCurrentLocation == false)
+		{
+			currentInformation = location;
+			haveWriteCurrentLocation = true;
+		}
 		new box.window.google.maps.Marker({
 			position: {lat: location.lat, lng: location.lng},
 			map: map,
@@ -104,14 +109,14 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 	
 	<title>Control</title>
 	<h1>Control</h1>
-    		<button type="button" id="btn" onclick="console.log("turn left")">Left Light</button>
-    		<button type="button" id="btn" onclick="console.log("turn right")">Right Light</button>
-		<button type="button" id="btn" onclick="console.log("go fast")">Emergency</button>
-        
+    		<button type="button" id="btn-turn-left">Left Light</button>
+    		<button type="button" id="btn-turn-right">Right Light</button>
+			<button type="button" id="btn-speed-up">Speed up</button>
+			<button type="button" id="btn-slow-down">Slown down</button>
+			<button type="button" id="btn-emergency">Emergency</button>
 	<p>You want to : <span id="cnt">...<\span></p>
 	`
-	let leftBtn = control.querySelector("#left-light")
-	let rightBtn = control.querySelector("#right-light")
+	let leftBtn = control.querySelector("#btn-turn-left")
 	if(leftBtn) {
         leftBtn.addEventListener("click", () => {
             console.log('leftBtn click')
@@ -119,12 +124,67 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 			initialRight = false;
         })
     }
+	let rightBtn = control.querySelector("#btn-turn-right")
     if(rightBtn) {
         rightBtn.addEventListener("click", () => {
 			console.log('rightBtn click')
 			initialRight = true;
 			initialLeft = false;
         })
+	}
+	let speedUpBtn = control.querySelector("#btn-speed-up")
+	if (speedUpBtn) {
+		speedUpBtn.addEventListener("click",() => {
+			console.log("speedUpBtn click");
+			if (intitialSpeed < maxSpeed - 5)
+				intitialSpeed = intitialSpeed + 5;
+			else
+				intitialSpeed = maxSpeed;
+		})
+	}
+	let emergencyBtn = control.querySelector("#btn-emergency")
+	if(emergencyBtn) {
+		emergencyBtn.addEventListener("click", () => {
+			console.log('EmergencyBtn click');
+			socket.emit('emergency-case', currentInformation);
+			console.log(currentInformation)
+		})
+	}
+	socket.on('emergency-case-request', (message) =>{
+		let name = message.name
+		if (currentInformation.name == name)
+		{
+			console.log("Success for request way")
+			console.log(`Your name: ${currentInformation.name}`)
+			console.log(`Request name: ${name}`)
+			let mess = bc.querySelector("#message");
+			mess.innerHTML = 'Success for request way. You can speed up now !!!';
+			intitialSpeed = intitialSpeed*1.1;
+		}
+		else 
+		{
+			console.log("other car need to go fast")
+			console.log(`Your name: ${currentInformation.name}`)
+			console.log(`Request name: ${name}`)
+			let mess = bc.querySelector("#message");
+			mess.innerHTML = 'Other car need to go fast!. Slow down';
+			intitialSpeed = 0;
+
+		}
+	})
+	let slowDownBtn = control.querySelector("#btn-slow-down")
+	if (slowDownBtn) {
+		slowDownBtn.addEventListener("click", () => {
+			console.log('slowDownBtn click');
+			if (intitialSpeed > 5)
+			{
+				intitialSpeed = intitialSpeed - 5;
+			}
+			else
+			{
+				intitialSpeed = 0;
+			}
+		})
 	}
 	simulator("Vehicle.Speed", "get", () => {
 		return intitialSpeed;
@@ -165,9 +225,9 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 	})
 	widgets.register("Table",
         StatusTable({
-            apis:["Vehicle.ADAS.CruiseControl.SpeedSet"],
+            apis:["Vehicle.Speed", "Vehicle.Body.Lights.IsRightIndicatorOn","Vehicle.Body.Lights.IsLeftIndicatorOn"],
             vehicle: vehicle,
-		    refresh: 1000         
+		    refresh: 100         
         })
 	)
 	widgets.register(

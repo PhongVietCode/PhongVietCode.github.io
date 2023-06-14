@@ -23,6 +23,12 @@ io.on('connection',(socket)=> {
   })
   i = (i + 1) % location.length;
   markers.length = io.engine.clientsCount;
+
+  socket.on('emergency-case', message => {
+    console.log("line 28")
+    console.log(message);
+    io.emit('emergency-case-request',message);
+  }) 
 })
 server.listen(3000, () => {
   console.log('listening on *:3000');
