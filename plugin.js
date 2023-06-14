@@ -165,7 +165,7 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 	})
 	widgets.register("Table",
         StatusTable({
-            apis:["Vehicle.Speed","Vehicle.Body.Lights.IsLeftIndicatorOn", "Vehicle.Body.Lights.IsRightIndicatorOn"],
+            apis:["Vehicle.ADAS.CruiseControl.SpeedSet"],
             vehicle: vehicle,
 		    refresh: 1000         
         })
