@@ -174,6 +174,7 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 					console.log('cancel btn click');
 					cancelBtn.style.display = "none";
 					currentSpeed = initSpeed;
+					control.querySelector("#cnt").textContent = ''
 				})
 				cancelBtn.style.display = '';
 			}
