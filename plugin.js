@@ -9,6 +9,7 @@ const socket = io('http://127.0.0.1:3000');
 //-------------------------
 // ini var
 let initialCenter = {lat:0, lng:0};
+let position = {lat:0, lng:0};
 let nearbyCar = new Map();
 let haveMarker = false; // cho nay co the sai
 var maxSpeed = 100;
@@ -32,12 +33,13 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, {icon = null} = {}
 	};
 	socket.on("marker", (location) => {
 		initialCenter = location;
+		position = location;
 		if (haveWriteCurrentLocation == false)
 		{
 			currentInformation = location;
 			haveWriteCurrentLocation = true;
 		}
-		new box.window.google.maps.Marker({
+		marker = new box.window.google.maps.Marker({
 			position: {lat: location.lat, lng: location.lng},
 			map: map,
 			label: location.name,
@@ -60,6 +62,36 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, {icon = null} = {}
 			}
 		}	
 	})
+	box.window.google.maps.event.addListener(map, 'click', function(event) {
+		var result = [event.latLng.lat(), event.latLng.lng()];
+		transition(result);
+    });
+
+	box.window.google.maps.event.addDomListener(window, 'load', GoogleMapsLocation);
+
+	var numDeltas = 100;
+	var delay = 10;
+	var i = 0;
+	var deltaLat;
+	var deltaLng;
+
+	function transition(result){
+		i = 0;
+		deltaLat = (result[0] - position[0])/numDeltas;
+		deltaLng = (result[1] - position[1])/numDeltas;
+		moveMarker();
+	}
+
+	function moveMarker(){
+		position[0] += deltaLat;
+		position[1] += deltaLng;
+		var latlng = new box.window.google.maps.LatLng(position[0], position[1]);
+		marker.setPosition(latlng);
+		if (i!=numDeltas){
+			i++;
+			setTimeout(moveMarker,delay);
+		}
+	}
 	box.injectNode(ggMap);
 }
 // plugin ----------------------
