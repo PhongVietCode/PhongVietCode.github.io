@@ -18,6 +18,8 @@ const initSpeed = 10;
 let distance;
 let initialLeft = false;
 let initialRight = false;
+let a = 1;
+let b = 1;
 const control = document.createElement("div")
 	control.style = 'width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center'
 	control.innerHTML = `
@@ -66,6 +68,7 @@ const otherCarInfo = document.createElement("div")
 			<th>Speed</th>
 			<th>Want to take l/r</th>
 			<th>Distance (m)</th>
+			<th>Angle</th>
 		</tr>
 	</table>
 	`
@@ -123,15 +126,16 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 				strokeWeight: 30,
 			});
 			route.setMap(map);
-			let a = slope(myRoad);
-			let b = intercept(myRoad, a);
+			a = slope(myRoad);
+			b = intercept(myRoad, a);
 			let sentdata = setInterval(
 				function () {
 					socket.emit("sendPos", { // always send data to sever
 						location: currentPos,
 						name: myCarname,
 						speed: currentSpeed,
-						direction: { left: initialLeft, right: initialRight }
+						direction: { left: initialLeft, right: initialRight },
+						slope : a
 					});
 				}
 			, 700);
@@ -208,6 +212,9 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 				var distanceCell = newRow.insertCell();
 				distanceCell.textContent = distance;
 				
+				var anglecell = newRow.insertCell();
+				anglecell.textContent = calculateAngle(a,markers[j].slope);
+
 				if (nearbyCar.has(markers[j].name) == false) {
 					nearbyCar.set(markers[j].name, 1);
 					console.log(`add a near by marker car !, ${newmarker.getLabel()}`)
@@ -414,5 +421,10 @@ function runMarkerR(a, b, currentPos) {
 	currentPos.lng = a * currentPos.lat + b;
 	return currentPos;
 }
-
+function calculateAngle(m1, m2) {
+	const angle = Math.atan((m2 - m1) / (1 + m1 * m2));
+	let rs = angle * (180 / Math.PI);
+	if (rs < 0) rs = -rs;
+	return rs;
+}
 export default plugin
