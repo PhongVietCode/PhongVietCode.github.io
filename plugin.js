@@ -16,7 +16,7 @@ let haveWriteCurrentLocation = false;
 let currentSpeed = 10;
 const initSpeed = 10;
 let distance;
-let initialLeft = true;
+let initialLeft = false;
 let initialRight = false;
 const control = document.createElement("div")
 	control.style = 'width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center'
@@ -141,7 +141,7 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 			route.setMap(map);
 			let a = slope(myRoad);
 			let b = intercept(myRoad, a);
-			setInterval(() => { socket.emit("sendPos", currentPos); }, 3000);
+			setInterval(() => { socket.emit("sendPos", {location:currentPos, name:myCarname , speed : currentSpeed , direction :{left : initialLeft, right : initialRight}}); }, 3000); // thay doi current pos
 			
 			function runM() {
 				if (baseInfo.rv) {
@@ -191,16 +191,28 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 				nameCell.textContent = markers[j].name;
 
 				var speedCell = newRow.insertCell();
-				speedCell.textContent = "0";
+				speedCell.textContent = markers[j].speed;
 				
 				var directionCell = newRow.insertCell();
-				directionCell.textContent = "NULL";
+				let currentDirection;
+				if (markers[j].direction.left == false && markers[j].direction.right == false){
+					currentDirection = "Straight";
+				}
+				else if (markers[j].direction.left == true){
+					currentDirection = "Left";
+				}
+				else {
+					currentDirection = "Right";
+				}
+				directionCell.textContent = currentDirection;
 				
 				var distanceCell = newRow.insertCell();
 				distanceCell.textContent = distance;
 				nearbyCar.set(markers[j].name, {lat: markers[j].location.lat, lng: markers[j].location.lng});
 			}
 		}
+		/// cap nhat position
+
 	})
 	box.injectNode(ggMap);
 }
