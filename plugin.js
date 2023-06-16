@@ -167,6 +167,14 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 			console.log("Draw a marker: " + baseInfo.name)
 		}
 	})
+	let newmarker = new box.window.google.maps.Marker({
+		draggable: false,
+		icon: {
+			path: box.window.google.maps.SymbolPath.CIRCLE,
+			scale: 5,
+		},
+	});
+	newmarker.setMap(null);
 	socket.on("addNearby", markers => { 
 		// console.log(markers);
 		let table = otherCarInfo.querySelector('#car-table');
@@ -199,22 +207,13 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 				
 				var distanceCell = newRow.insertCell();
 				distanceCell.textContent = distance;
-				let newmarker = new box.window.google.maps.Marker({
-					draggable: false,
-					icon: {
-						path: box.window.google.maps.SymbolPath.CIRCLE,
-						scale: 5,
-					},
-					label: markers[j].name,
-				});
-				newmarker.setMap(map);
+				
 				if (nearbyCar.has(markers[j].name) == false) {
 					nearbyCar.set(markers[j].name, 1);
 					console.log(`add a near by marker car !, ${newmarker.getLabel()}`)
-					newmarker.setPosition({ lat: markers[j].location.lat, lng: markers[j].location.lng });
-				} else {
-					newmarker.setPosition({ lat: markers[j].location.lat, lng: markers[j].location.lng });	
+					newmarker.setMap(map);
 				}
+				newmarker.setPosition({ lat: markers[j].location.lat, lng: markers[j].location.lng });	
 			}
 		}
 	})
