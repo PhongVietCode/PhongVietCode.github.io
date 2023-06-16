@@ -20,7 +20,6 @@ let initialLeft = false;
 let initialRight = false;
 const control = document.createElement("div")
 	control.style = 'width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center'
-
 	control.innerHTML = `
 	
 	<title>Control</title>
@@ -32,7 +31,7 @@ const control = document.createElement("div")
 			<button type="button" id="btn-emergency">Emergency</button>
 			<button type="button" id="update">Update Nearby</button>
 			<button type="button" id="stop">Stop the car</button>
-			<button type="button" id="continue">Continue</button>
+			<button type="button" id="continue">Run the car</button>
 
 	<p>You want to : <span id="cnt">...<\span></p>
 	`
@@ -101,20 +100,6 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 		mapId: "a8dea08fb82841f5",
 	});
 
-	// const cam_btn = control.querySelector("#tiltandrotate")
-	// if (cam_btn) {
-	// 	cam_btn.addEventListener("click", () => {
-	// 		map.setHeading(map.getHeading() + 10);
-	// 		console.log(map.getHeading());
-	// 	})
-	// }
-	const ud = control.querySelector("#update")
-	if (ud) {
-		ud.addEventListener("click", () => {
-			socket.emit("requestUpdate", "...");
-		})
-	}
-
 	socket.on("getMarker", (baseInfo) => {
 		if (haveWriteCurrentLocation == false) {
 
@@ -123,7 +108,6 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 			myCarname = baseInfo.name;
 			haveWriteCurrentLocation = true;
 			currentPos = baseInfo.location;
-			
 			myMarker.setMap(map);
 			myMarker.setPosition(currentPos);
 
@@ -141,8 +125,16 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 			route.setMap(map);
 			let a = slope(myRoad);
 			let b = intercept(myRoad, a);
-			setInterval(() => { socket.emit("sendPos", {location:currentPos, name:myCarname , speed : currentSpeed , direction :{left : initialLeft, right : initialRight}}); }, 3000); // thay doi current pos
-			
+			let sentdata = setInterval(
+				function () {
+					socket.emit("sendPos", { // always send data to sever
+						location: currentPos,
+						name: myCarname,
+						speed: currentSpeed,
+						direction: { left: initialLeft, right: initialRight }
+					});
+				}
+			, 700);
 			function runM() {
 				if (baseInfo.rv) {
 					currentPos = runMarkerR(a, b, currentPos);
@@ -152,32 +144,31 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 					currentPos = runMarker(a, b, currentPos);
 					if(currentPos.lat > baseInfo.des.lat) clearInterval(myint);
 				}
+				
 				map.setCenter(currentPos)
 				myMarker.setPosition(currentPos)
 			}
+			
 
-			let myint = setInterval(runM, 3000);
-
+			let myint;
+			const cont = control.querySelector("#continue")
+			if (cont) {
+				cont.addEventListener("click", () => {
+					myint = setInterval(runM,1000);
+				})
+			}
 			const st = control.querySelector("#stop")
 			if (st) {
 				st.addEventListener("click", () => {
 					clearInterval(myint);
 				})
 			}
-			const cont = control.querySelector("#continue")
-			if (cont) {
-				cont.addEventListener("click", () => {
-					myint = setInterval(runM,3000);
-				})
-			}
+			
 			console.log("Draw a marker: " + baseInfo.name)
 		}
 	})
-	socket.on("sendMarker", otherCar => {
-		console.log(`There is a car near you, ${otherCar.name}`)
-	})
 	socket.on("addNearby", markers => { 
-		console.log(markers);
+		// console.log(markers);
 		let table = otherCarInfo.querySelector('#car-table');
 		while (table.rows.length > 1) {
 			table.deleteRow(1);
@@ -208,11 +199,24 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 				
 				var distanceCell = newRow.insertCell();
 				distanceCell.textContent = distance;
-				nearbyCar.set(markers[j].name, {lat: markers[j].location.lat, lng: markers[j].location.lng});
+				let newmarker = new box.window.google.maps.Marker({
+					draggable: false,
+					icon: {
+						path: box.window.google.maps.SymbolPath.CIRCLE,
+						scale: 5,
+					},
+					label: markers[j].name,
+				});
+				newmarker.setMap(map);
+				if (nearbyCar.has(markers[j].name) == false) {
+					nearbyCar.set(markers[j].name, 1);
+					console.log(`add a near by marker car !, ${newmarker.getLabel()}`)
+					newmarker.setPosition({ lat: markers[j].location.lat, lng: markers[j].location.lng });
+				} else {
+					newmarker.setPosition({ lat: markers[j].location.lat, lng: markers[j].location.lng });	
+				}
 			}
 		}
-		/// cap nhat position
-
 	})
 	box.injectNode(ggMap);
 }
@@ -332,11 +336,6 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 	simulator("Vehicle.Body.Lights.IsRightIndicatorOn", "get", () => {
 		return initialRight;
 	});
-
-	let sim_function;
-	simulator("Vehicle.Speed", "subscribe", async ({ func, args }) => {
-		sim_function = args[0]
-	})
 
 	// widget register ----------------------------
 	socket.on('connect', () => {

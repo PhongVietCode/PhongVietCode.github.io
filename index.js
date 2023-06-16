@@ -18,34 +18,35 @@ let markers = [];
 io.on('connection',(socket)=> {
   console.log(`user connected ${socket.id}`)
   socket.on("requestMarker", () => {
-    markers.push(baseInfo[i]);
+    markers.push({
+      name: baseInfo[i].name,
+      location: baseInfo[i].location,
+      speed: baseInfo[i].speed,
+      direction: baseInfo[i].direction,
+    });
     while (markers.length > io.engine.clientsCount) {
       markers.pop();
     }
     socket.emit("getMarker", baseInfo[i]); // 1. give the only one client the marker
-    socket.broadcast.emit("sendMarker", baseInfo[i]); //2. truyen marker di
     // i = (i + 1) % baseInfo.length;
   })
-  socket.on("sendPos",(infor_car_update)=>{
-    for (let i = 0;i < markers.length;i++){
-      if (markers[i].name  === infor_car_update.name){
-        markers[i].location.lat = infor_car_update.location.lat;
-        markers[i].location.lng = infor_car_update.location.lng;
+
+  socket.on("sendPos", (infor_car_update) => { // is call when car moves
+    for (let i = 0; i < markers.length; i++){
+      if (markers[i].name === infor_car_update.name) {
+        markers[i].location = infor_car_update.location;
+        markers[i].dir = infor_car_update.direction;
         markers[i].speed = infor_car_update.speed;
-        markers[i].direction = infor_car_update.direction;
       }
     }
   })
-  socket.on("requestUpdate", () => {
-    socket.emit("addNearby", markers); // 3. give the recent the marker list
-  })
   setInterval(function() {
-    io.sockets.emit("addNearby", markers);
-  }, 3000)
+    io.emit("addNearby", markers);
+  }, 700)
+
   i = io.engine.clientsCount - 1;
-  
-  console.log(`client: ${io.engine.clientsCount}, marker count: ${markers.length} ${i}`)
-  console.log(markers)
+  console.log(`client: ${io.engine.clientsCount}, marker count: ${markers.length}`)
+  // console.log(markers)
 })
 server.listen(3000, () => {
   console.log('listening on *:3000');
