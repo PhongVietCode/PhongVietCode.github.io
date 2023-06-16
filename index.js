@@ -24,6 +24,10 @@ io.on('connection',(socket)=> {
   i = (i + 1) % location.length;
   markers.length = io.engine.clientsCount;
 
+  setInterval(function() {
+    io.sockets.emit("broadcast-marker", markers);
+}, 1000);
+
   socket.on('emergency-case', message => {
     console.log("line 28")
     console.log(message);

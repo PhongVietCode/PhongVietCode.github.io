@@ -9,6 +9,7 @@ const socket = io('http://127.0.0.1:3000');
 //-------------------------
 // ini var
 let initialCenter = {lat:0, lng:0};
+let position = {lat:0, lng:0};
 let nearbyCar = new Map();
 let haveMarker = false; // cho nay co the sai
 var maxSpeed = 100;
@@ -32,6 +33,7 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 	};
 	socket.on("marker", (location) => {
 		initialCenter = location;
+		position = location;
 		if (haveWriteCurrentLocation == false)
 		{
 			currentInformation = location;
@@ -95,45 +97,68 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 // plugin ----------------------
 const plugin = ({ widgets, simulator, vehicle }) => {
 
-	let currentSpeed = 10;
-	const initSpeed = 10;
-	let initialLeft = true;
-	let initialRight = false;
-	let initialLat = initialCenter.lat;
-	let initialLng = initialCenter.lng;
-	const otherCarInfo = document.createElement("div")
-	otherCarInfo.innerHTML = `
-	<style>
-		table {
-		font-family: arial, sans-serif;
-		border-collapse: collapse;
-		width: 100%;
+		let currentSpeed = 10;
+		const initSpeed = 10;
+		let initialLeft = true;
+		let initialRight = false;
+		let initialLat = initialCenter.lat;
+		let initialLng = initialCenter.lng;
+		const otherCarInfo = document.createElement("div")
+		otherCarInfo.innerHTML = `
+		<style>
+			table {
+			font-family: arial, sans-serif;
+			border-collapse: collapse;
+			width: 100%;
+			}
+			td, th {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+			}
+			tr:nth-child(even) {
+			background-color: #dddddd;
+			}
+		</style>
+		<h2>CarNearby</h2>
+		<table id="car-table">
+			<tr>
+			<th>Name Car</th>
+			<th>Speed</th>
+			<th>Want to take l/r</th>
+			<th>Distance (m)</th>
+			</tr>>
+		</tr>
+		</table>
+		`
+
+	socket.on('broadcast-marker', (markers) =>{
+		console.log(markers);
+		const table = otherCarInfo.querySelector("#car-table");
+		while (table.rows.length > 1) {
+			table.deleteRow(1);
 		}
-		td, th {
-		border: 1px solid #dddddd;
-		text-align: left;
-		padding: 8px;
+		for (let i = 0 ; i< markers.length;i++){
+			if (markers[i] == null) continue;
+			let distance = calculateDistance(position.lat,position.lng, markers[i].lat,markers[i].lng);
+			if (distance != 0){
+				const newRow = table.insertRow();
+				var nameCell = newRow.insertCell();
+				nameCell.textContent = markers[i].name;
+				var speedCell = newRow.insertCell();
+				speedCell.textContent = "0";
+				var directionCell = newRow.insertCell();
+				directionCell.textContent = "NULL";
+				var distanceCell = newRow.insertCell();
+				distanceCell.textContent = distance;
+			}
 		}
-		tr:nth-child(even) {
-		background-color: #dddddd;
-		}
-	</style>
-	<h2>CarNearby</h2>
-	<table id="car-table">
-		<tr>
-		<th>Name Car</th>
-		<th>Speed</th>
-		<th>Want to take l/r</th>
-		<th>Distance (m)</th>
-		</tr>>
-	</tr>
-	</table>
-	`
+	})
 	socket.on('list-car', (listCar) => {
 		for (let i = 0; i < listCar.length; i++) {
 			console.log('line 103');
 			console.log(listCar[i]);
-		}
+		} 
 	})
 	const bc = document.createElement("div")
 	bc.style = `margin:10px;display: flex;justify-content: center;align-items: center;`
