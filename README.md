@@ -5,7 +5,7 @@ Our sever is in `index.js` file. Our plugin source code is in `plugin.js`.
 ## Documentation
 0. Clone our repo:
 ```
-  git clone https://github.com/PhongVietCode/PhongVietCode.github.io/edit/main/README.md
+  git clone https://github.com/PhongVietCode/PhongVietCode.github.io
 ```
 2. Install NodeJs:
 - For Windows: https://nodejs.org/en
