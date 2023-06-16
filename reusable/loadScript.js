@@ -1,3 +1,4 @@
+
 const loadScript = (boxWindow, url) => {
     return new Promise(async (resolve, reject) => {
         try {
