@@ -41,19 +41,16 @@ io.on('connection',(socket)=> {
       }
     }
   })
-  socket.on("emergency-case", (info) => {
-    socket.broadcast.emit("emergency-case-request", info);
-  })
   setInterval(function() {
     io.emit("addNearby", markers);
   }, 700)
 
   i = io.engine.clientsCount - 1;
   console.log(`client: ${io.engine.clientsCount}, marker count: ${markers.length}`)
-  // console.log(markers)
 
   socket.on('emergency-case', (data) => {
-    io.emit('emergency-case-request',data)
+    console.log(data.name);
+    socket.broadcast.emit('emergency-case-request', data);
   })
 })
 server.listen(3000, () => {

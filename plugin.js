@@ -23,39 +23,42 @@ let a = 1;
 let b = 1;
 let myint;
 let haveColli = false;
-let currentInformation = {};
-const control = document.createElement("div")
-	control.style = 'width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center'
-	control.innerHTML = `
-		<style>
-		.btn{
-			border-radius: 12px;
-			border: 2px solid #4CAF50; /* Green */
-			margin:2px;
-			transition-duration: 0.2s;
-		}
-		.btn:hover {
-			background-color: #4CAF50; 
-			color: white;
-			box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-			padding: 3px;
-			margin: 4px;
-		}
-		h1 {
-			display: flex;
-		}
-		</style>
-		<h1>Control</h1>
-				<button type="button" id="btn-turn-left" class ="btn" >Turn left</button>
-				<button type="button" id="btn-turn-right" class ="btn">Turn right</button>
-				<button type="button" id="btn-speed-up" class ="btn">Speed up</button>
-				<button type="button" id="btn-slow-down" class ="btn">Slown down</button>
-				<button type="button" id="btn-emergency" class ="btn">Emergency</button>
-				<button type="button" id="stop" class ="btn">Stop the car</button>
-				<button type="button" id="continue" class ="btn">Run the car</button>
+let currentInformation = { name: myCarname };
+let timeInterval = 10;
+let step = 0.0000001;
+let initstep = 0.0000001;
 
-		<p>You want to : <span id="cnt">...</span></p>
-	`
+const control = document.createElement("div")
+control.style = 'width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center'
+control.innerHTML = `
+	<style>
+	.btn{
+		border-radius: 12px;
+		border: 2px solid #4CAF50; /* Green */
+		margin:2px;
+		transition-duration: 0.2s;
+	}
+	.btn:hover {
+		background-color: #4CAF50; 
+		color: white;
+		box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+		padding: 3px;
+		margin: 4px;
+	}
+	h1 {
+		display: flex;
+	}
+	</style>
+	<h1>Control</h1>
+			<button type="button" id="btn-turn-left" class ="btn" >Turn left</button>
+			<button type="button" id="btn-turn-right" class ="btn">Turn right</button>
+			<button type="button" id="btn-speed-up" class ="btn">Speed up</button>
+			<button type="button" id="btn-slow-down" class ="btn">Slown down</button>
+			<button type="button" id="btn-emergency" class ="btn">Emergency</button>
+			<button type="button" id="stop" class ="btn">Stop the car</button>
+			<button type="button" id="continue" class ="btn">Run the car</button>
+	<p>You want to : <span id="cnt">...<\span></p>
+`
 const bc = document.createElement("div")
 bc.style = `width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center`
 bc.innerHTML = `
@@ -131,7 +134,7 @@ otherCarInfo.innerHTML = `
 `
 let table = otherCarInfo.querySelector('#car-table');
 let myWarning = bc.querySelector("#warningTable");
-setInterval(checkCollision, 1000);
+setInterval(checkCollision, timeInterval);
 // ggmap -----------------------
 const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = {}) => {
 	await loadScript(box.window, `https://maps.googleapis.com/maps/api/js?key=${apikey}`);
@@ -164,15 +167,14 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 
 	socket.on("getMarker", (baseInfo) => {
 		if (haveWriteCurrentLocation == false) {
-
 			let ne = bc.querySelector("#name");
 			ne.innerHTML = `Your car is: ${baseInfo.name}`;
 			myCarname = baseInfo.name;
+			currentInformation.name = myCarname;
 			haveWriteCurrentLocation = true;
 			currentPos = baseInfo.location;
 			myMarker.setMap(map);
 			myMarker.setPosition(currentPos);
-
 			map.setCenter(currentPos);
 			map.setHeading(baseInfo.heading)
 			let myRoad = [baseInfo.location, baseInfo.des];
@@ -197,7 +199,7 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 						slope : a
 					});
 				}
-			, 700);
+			, timeInterval/10);
 			function runM() {
 				if (baseInfo.rv) {
 					currentPos = runMarkerR(a, b, currentPos);
@@ -214,7 +216,7 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 			const cont = control.querySelector("#continue")
 			if (cont) {
 				cont.addEventListener("click", () => {
-					myint = setInterval(runM, 1000);
+					myint = setInterval(runM, timeInterval);
 					currentSpeed = initSpeed;
 				})
 			}
@@ -305,14 +307,6 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 
 // plugin ----------------------
 const plugin = ({ widgets, simulator, vehicle }) => {
-	
-	
-	socket.on('list-car', (listCar) => {
-		for (let i = 0; i < listCar.length; i++) {
-			console.log('line 103');
-			// console.log(listCar[i]);
-		}
-	})
 	let leftBtn = control.querySelector("#btn-turn-left")
 	if (leftBtn) {
 		leftBtn.addEventListener("click", () => {
@@ -336,28 +330,28 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 		speedUpBtn.addEventListener("click", () => {
 			console.log("speedUpBtn click");
 			control.querySelector("#cnt").innerHTML = 'Speed up';
-			if (currentSpeed < maxSpeed - 5)
+			if (currentSpeed < maxSpeed - 5) {
 				currentSpeed = currentSpeed + 5;
-			else
+				if(step == 0)
+					step = initstep;
+				step = step * 1.5;
+			}
+			else {
 				currentSpeed = maxSpeed;
+				step = step * 1.5;
+			}
 
 		})
 	}
 	let emergencyBtn = control.querySelector("#btn-emergency")
 	if (emergencyBtn) {
 		emergencyBtn.addEventListener("click", () => {
-			console.log('EmergencyBtn click');
-			control.querySelector("#cnt").innerHTML = 'Request for emergency case';
-			currentInformation = {
-				name: myCarname,
-				lat: currentPos.lat,
-				lng: currentPos.lng
-			};
-			console.log(currentInformation);
+			control.querySelector("#cnt").innerHTML = 'Request for emergency case'
 			socket.emit('emergency-case', currentInformation);
+
 			// add button for cancel
 			if (!control.querySelector('#cancel-btn')) {
-				let newBtn = document.createElement("button");
+				let newBtn = document.createElement("button")
 				newBtn.textContent = 'Cancel emergency case';
 				newBtn.id = 'cancel-btn';
 				newBtn.type = 'button';
@@ -366,36 +360,36 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 			let cancelBtn = control.querySelector('#cancel-btn');
 			if (cancelBtn) {
 				cancelBtn.addEventListener("click", () => {
-					console.log('cancel btn click');
 					cancelBtn.style.display = "none";
 					currentSpeed = initSpeed;
 					control.querySelector("#cnt").textContent = ''
 				})
 				cancelBtn.style.display = '';
 			}
-			console.log(currentInformation)
 		})
 	}
 	socket.on('emergency-case-request', (message) => {
-		let name = message.name
-		if (currentInformation.name == name) {
-			console.log("Success for request way")
-			console.log(`Your name: ${message.name}`)
-			console.log(`Request name: ${name}`)
-			let mess = bc.querySelector("#message");
-			mess.innerHTML = 'Success for request way. You can speed up now !!!';
-			currentSpeed = currentSpeed * 1.1;
+		const rows = myWarning.getElementsByTagName('tr');
+		const name = message.name;
+		let foundRow = null;
+		for (let i = 1; i < rows.length; i++) {
+			const cells = rows[i].getElementsByTagName('td');
+			const firstCell = cells[0].textContent;
+		  
+			if (firstCell === name) {
+			  foundRow = rows[i];
+			  break;
+			}
 		}
-		else {
-			console.log("other car need to go fast")
-			console.log(`Your name: ${message.name}`)
-			console.log(`Request name: ${name}`)
-			let mess = bc.querySelector("#message");
-			mess.innerHTML = 'Other car need to go fast!. Slow down';
-			currentSpeed = 0;
-
+		if (foundRow == null) {
+			const newRow = myWarning.insertRow();
+			var nameCell = newRow.insertCell();
+			nameCell.textContent = name;
+			var warningCell = newRow.insertCell();
+			warningCell.textContent = 'Emergency !';
 		}
 	})
+	
 	let slowDownBtn = control.querySelector("#btn-slow-down")
 	if (slowDownBtn) {
 		slowDownBtn.addEventListener("click", () => {
@@ -403,9 +397,12 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 			console.log('slowDownBtn click');
 			if (currentSpeed > 5) {
 				currentSpeed = currentSpeed - 5;
+				step = step / 1.5;
 			}
 			else {
 				currentSpeed = 0;
+				step = 0;
+
 			}
 		})
 	}
@@ -494,12 +491,12 @@ function toRadians(degrees) {
 	return degrees * (Math.PI / 180);
 }
 function runMarker(a, b, currentPos) {
-	currentPos.lat = currentPos.lat + 0.00000000000000000001;
+	currentPos.lat = currentPos.lat + step;
 	currentPos.lng = a * currentPos.lat + b;
 	return currentPos;
 }
 function runMarkerR(a, b, currentPos) {
-	currentPos.lat = currentPos.lat - 0.00000000000000000001;
+	currentPos.lat = currentPos.lat - step;
 	currentPos.lng = a * currentPos.lat + b;
 	return currentPos;
 }
@@ -529,9 +526,6 @@ function checkCollision() {
 				}
 			
 		}
-		else {
-
-		}
 	}
 }
 function setWarning(name) {
@@ -557,7 +551,7 @@ function setWarning(name) {
 		// 		console.log("solve collide")
 		// 	}
 		// }
-		setInterval(myint, 1000);
+		// setInterval(myint, 1000);
 	}
 }
 export default plugin
