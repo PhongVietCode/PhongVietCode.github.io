@@ -23,37 +23,39 @@ let a = 1;
 let b = 1;
 let myint;
 let haveColli = false;
+let currentInformation = {};
 const control = document.createElement("div")
-control.style = 'width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center'
-control.innerHTML = `
-	<style>
-	.btn{
-		border-radius: 12px;
-		border: 2px solid #4CAF50; /* Green */
-		margin:2px;
-		transition-duration: 0.2s;
-	}
-	.btn:hover {
-		background-color: #4CAF50; 
-		color: white;
-		box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-		padding: 3px;
-		margin: 4px;
-	}
-	h1 {
-		display: flex;
-	}
-	</style>
-	<h1>Control</h1>
-			<button type="button" id="btn-turn-left" class ="btn" >Turn left</button>
-			<button type="button" id="btn-turn-right" class ="btn">Turn right</button>
-			<button type="button" id="btn-speed-up" class ="btn">Speed up</button>
-			<button type="button" id="btn-slow-down" class ="btn">Slown down</button>
-			<button type="button" id="btn-emergency" class ="btn">Emergency</button>
-			<button type="button" id="stop" class ="btn">Stop the car</button>
-			<button type="button" id="continue" class ="btn">Run the car</button>
-	<p>You want to : <span id="cnt">...<\span></p>
-`
+	control.style = 'width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center'
+	control.innerHTML = `
+		<style>
+		.btn{
+			border-radius: 12px;
+			border: 2px solid #4CAF50; /* Green */
+			margin:2px;
+			transition-duration: 0.2s;
+		}
+		.btn:hover {
+			background-color: #4CAF50; 
+			color: white;
+			box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+			padding: 3px;
+			margin: 4px;
+		}
+		h1 {
+			display: flex;
+		}
+		</style>
+		<h1>Control</h1>
+				<button type="button" id="btn-turn-left" class ="btn" >Turn left</button>
+				<button type="button" id="btn-turn-right" class ="btn">Turn right</button>
+				<button type="button" id="btn-speed-up" class ="btn">Speed up</button>
+				<button type="button" id="btn-slow-down" class ="btn">Slown down</button>
+				<button type="button" id="btn-emergency" class ="btn">Emergency</button>
+				<button type="button" id="stop" class ="btn">Stop the car</button>
+				<button type="button" id="continue" class ="btn">Run the car</button>
+
+		<p>You want to : <span id="cnt">...</span></p>
+	`
 const bc = document.createElement("div")
 bc.style = `width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center`
 bc.innerHTML = `
@@ -345,8 +347,13 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 	if (emergencyBtn) {
 		emergencyBtn.addEventListener("click", () => {
 			console.log('EmergencyBtn click');
-			control.querySelector("#cnt").innerHTML = 'Request for emergency case'
-			let currentInformation = { name: myCarname, location: currentPos};
+			control.querySelector("#cnt").innerHTML = 'Request for emergency case';
+			currentInformation = {
+				name: myCarname,
+				lat: currentPos.lat,
+				lng: currentPos.lng
+			};
+			console.log(currentInformation);
 			socket.emit('emergency-case', currentInformation);
 			// add button for cancel
 			if (!control.querySelector('#cancel-btn')) {
@@ -402,7 +409,7 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 			}
 		})
 	}
-	simulator("Vehicle.Speed", "get", () => {
+	simulator("Vehicle.ADAS.CruiseControl.SpeedSet", "get", () => {
 		return currentSpeed;
 	});
 	simulator("Vehicle.Body.Lights.IsLeftIndicatorOn", "set", (value) => {
@@ -487,12 +494,12 @@ function toRadians(degrees) {
 	return degrees * (Math.PI / 180);
 }
 function runMarker(a, b, currentPos) {
-	currentPos.lat = currentPos.lat + 0.00001;
+	currentPos.lat = currentPos.lat + 0.00000000000000000001;
 	currentPos.lng = a * currentPos.lat + b;
 	return currentPos;
 }
 function runMarkerR(a, b, currentPos) {
-	currentPos.lat = currentPos.lat - 0.00001;
+	currentPos.lat = currentPos.lat - 0.00000000000000000001;
 	currentPos.lng = a * currentPos.lat + b;
 	return currentPos;
 }
