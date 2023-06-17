@@ -379,7 +379,7 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 			const firstCell = cells[0].textContent;
 			const secondCell = cells[1].textContent;
 
-			if (firstCell === name && secondCell === "Emergency !") {
+			if (firstCell === name && secondCell === 'Emergency !') {
 					foundRow = rows[i];
 					break;
 			}
