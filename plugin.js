@@ -13,7 +13,7 @@ let nearMarkers = [];
 let nearbyCar = new Map();
 var maxSpeed = 100;
 const initSpeed = 10;
-let currentSpeed = 10;
+let currentSpeed = 0;
 let myCarname = "";
 let distance = 0;
 let initialLeft = false;
@@ -24,37 +24,36 @@ let b = 1;
 let myint;
 let haveColli = false;
 const control = document.createElement("div")
-	control.style = 'width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center'
-	control.innerHTML = `
-		<style>
-		.btn{
-			border-radius: 12px;
-			border: 2px solid #4CAF50; /* Green */
-			margin:2px;
-			transition-duration: 0.2s;
-		}
-		.btn:hover {
-			background-color: #4CAF50; 
-			color: white;
-			box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-			padding: 3px;
-			margin: 4px;
-		}
-		h1 {
-			display: flex;
-		}
-		</style>
-		<h1>Control</h1>
-				<button type="button" id="btn-turn-left" class ="btn" >Turn left</button>
-				<button type="button" id="btn-turn-right" class ="btn">Turn right</button>
-				<button type="button" id="btn-speed-up" class ="btn">Speed up</button>
-				<button type="button" id="btn-slow-down" class ="btn">Slown down</button>
-				<button type="button" id="btn-emergency" class ="btn">Emergency</button>
-				<button type="button" id="stop" class ="btn">Stop the car</button>
-				<button type="button" id="continue" class ="btn">Run the car</button>
-
-		<p>You want to : <span id="cnt">...<\span></p>
-	`
+control.style = 'width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center'
+control.innerHTML = `
+	<style>
+	.btn{
+		border-radius: 12px;
+		border: 2px solid #4CAF50; /* Green */
+		margin:2px;
+		transition-duration: 0.2s;
+	}
+	.btn:hover {
+		background-color: #4CAF50; 
+		color: white;
+		box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+		padding: 3px;
+		margin: 4px;
+	}
+	h1 {
+		display: flex;
+	}
+	</style>
+	<h1>Control</h1>
+			<button type="button" id="btn-turn-left" class ="btn" >Turn left</button>
+			<button type="button" id="btn-turn-right" class ="btn">Turn right</button>
+			<button type="button" id="btn-speed-up" class ="btn">Speed up</button>
+			<button type="button" id="btn-slow-down" class ="btn">Slown down</button>
+			<button type="button" id="btn-emergency" class ="btn">Emergency</button>
+			<button type="button" id="stop" class ="btn">Stop the car</button>
+			<button type="button" id="continue" class ="btn">Run the car</button>
+	<p>You want to : <span id="cnt">...<\span></p>
+`
 const bc = document.createElement("div")
 bc.style = `width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center`
 bc.innerHTML = `
@@ -230,9 +229,8 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 	})
 
 	socket.on("addNearby", markers => { 
-		// console.log(markers)
 		while (table.rows.length > 1) {
-			table.deleteRow(1);
+			table.deleteRow(1)
 		}
 		for (let j = 0; j < markers.length; j++) {
 			let info = markers[j];
@@ -262,7 +260,7 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 				distanceCell.textContent = distance;
 				
 				var anglecell = newRow.insertCell();
-				anglecell.textContent = calculateAngle(a,markers[j].slope);
+				anglecell.textContent = calculateAngle(a,markers[j].slope).toFixed(2);
 
 				if (nearbyCar.has(markers[j].name) == false) {
 					// run only one time
@@ -299,7 +297,6 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 				}
 			}
 		}
-		// console.log(nearMarkers)
 	})
 	box.injectNode(ggMap);
 }
@@ -349,6 +346,7 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 		emergencyBtn.addEventListener("click", () => {
 			console.log('EmergencyBtn click');
 			control.querySelector("#cnt").innerHTML = 'Request for emergency case'
+			let currentInformation = { name: myCarname, location: currentPos};
 			socket.emit('emergency-case', currentInformation);
 			// add button for cancel
 			if (!control.querySelector('#cancel-btn')) {
@@ -368,14 +366,14 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 				})
 				cancelBtn.style.display = '';
 			}
-			console.log(currentInformation);
+			console.log(currentInformation)
 		})
 	}
 	socket.on('emergency-case-request', (message) => {
 		let name = message.name
-		if (currentInformation.name == name) {
+		if (message.name == name) {
 			console.log("Success for request way")
-			console.log(`Your name: ${currentInformation.name}`)
+			console.log(`Your name: ${message.name}`)
 			console.log(`Request name: ${name}`)
 			let mess = bc.querySelector("#message");
 			mess.innerHTML = 'Success for request way. You can speed up now !!!';
@@ -383,7 +381,7 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 		}
 		else {
 			console.log("other car need to go fast")
-			console.log(`Your name: ${currentInformation.name}`)
+			console.log(`Your name: ${message.name}`)
 			console.log(`Request name: ${name}`)
 			let mess = bc.querySelector("#message");
 			mess.innerHTML = 'Other car need to go fast!. Slow down';
@@ -514,18 +512,18 @@ function checkCollision() {
 			if (dis < 7) {
 				const angle = cells[4].textContent;
 				if (angle > 80) {
-					const speed = cells[1].textContent;
-					// if (speed > 0) {
+						const speed = cells[1].textContent;
+						// if (speed > 0) {
 						haveColli = true;
 						setWarning(cells[0].textContent);
 						console.log("Collided !!!")
 						// }
 					}
 				}
-				else {
-					haveColli = false;
-					setWarning(cells[0].textContent);
-				}
+			
+		}
+		else {
+
 		}
 	}
 }
@@ -543,14 +541,16 @@ function setWarning(name) {
 		clearInterval(myint);
 	}
 	else {
-		const Wrows = myWarning.getElementsByTagName('tr');
-		let Wcells;
-		for (let i = 1; i < Wrows.length; i++) {
-			Wcells = Wrows[i].getElementsByTagName('td');
-			if (Wcells[0].textContent == name) {
-				myWarning.deleteRow(i);
-			}
-		}
+		// const Wrows = myWarning.getElementsByTagName('tr');
+		// let Wcells;
+		// for (let i = 1; i < Wrows.length; i++) {
+		// 	Wcells = Wrows[i].getElementsByTagName('td');
+		// 	if (Wcells[0].textContent === name) {
+		// 		myWarning.deleteRow(i);
+		// 		console.log("solve collide")
+		// 	}
+		// }
+		setInterval(myint, 1000);
 	}
 }
 export default plugin

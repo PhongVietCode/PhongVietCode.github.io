@@ -41,6 +41,9 @@ io.on('connection',(socket)=> {
       }
     }
   })
+  socket.on("emergency-case", (info) => {
+    socket.broadcast.emit("emergency-case-request", info);
+  })
   setInterval(function() {
     io.emit("addNearby", markers);
   }, 700)
