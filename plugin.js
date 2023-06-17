@@ -370,6 +370,7 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 		})
 	}
 	socket.on('emergency-case-request', (message) => {
+		console.log("emergency")
 		const rows = myWarning.getElementsByTagName('tr');
 		const name = message.name;
 		let foundRow = null;
