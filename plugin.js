@@ -378,7 +378,7 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 	}
 	socket.on('emergency-case-request', (message) => {
 		let name = message.name
-		if (message.name == name) {
+		if (currentInformation.name == name) {
 			console.log("Success for request way")
 			console.log(`Your name: ${message.name}`)
 			console.log(`Request name: ${name}`)
