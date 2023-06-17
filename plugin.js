@@ -9,43 +9,55 @@ const socket = io('http://127.0.0.1:3000');
 //-------------------------
 // ini var
 let currentPos = { lat: 0, lng: 0 };
+let nearMarkers = [];
 let nearbyCar = new Map();
 var maxSpeed = 100;
-let myCarname = "";
-let haveWriteCurrentLocation = false;
-let currentSpeed = 10;
 const initSpeed = 10;
-let distance;
+let currentSpeed = 10;
+let myCarname = "";
+let distance = 0;
 let initialLeft = false;
+let haveWriteCurrentLocation = false;
 let initialRight = false;
 let a = 1;
 let b = 1;
+let myint;
+let haveColli = false;
 const control = document.createElement("div")
 	control.style = 'width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center'
 	control.innerHTML = `
-	
-	<title>Control</title>
-	<h1>Control</h1>
-    		<button type="button" id="btn-turn-left">Turn left</button>
-    		<button type="button" id="btn-turn-right">Turn right</button>
-			<button type="button" id="btn-speed-up">Speed up</button>
-			<button type="button" id="btn-slow-down">Slown down</button>
-			<button type="button" id="btn-emergency">Emergency</button>
-			<button type="button" id="update">Update Nearby</button>
-			<button type="button" id="stop">Stop the car</button>
-			<button type="button" id="continue">Run the car</button>
+		<style>
+		.btn{
+			border-radius: 12px;
+			border: 2px solid #4CAF50; /* Green */
+			margin:2px;
+			transition-duration: 0.2s;
+		}
+		.btn:hover {
+			background-color: #4CAF50; 
+			color: white;
+			box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+			padding: 3px;
+			margin: 4px;
+		}
+		h1 {
+			display: flex;
+		}
+		</style>
+		<h1>Control</h1>
+				<button type="button" id="btn-turn-left" class ="btn" >Turn left</button>
+				<button type="button" id="btn-turn-right" class ="btn">Turn right</button>
+				<button type="button" id="btn-speed-up" class ="btn">Speed up</button>
+				<button type="button" id="btn-slow-down" class ="btn">Slown down</button>
+				<button type="button" id="btn-emergency" class ="btn">Emergency</button>
+				<button type="button" id="stop" class ="btn">Stop the car</button>
+				<button type="button" id="continue" class ="btn">Run the car</button>
 
-	<p>You want to : <span id="cnt">...<\span></p>
+		<p>You want to : <span id="cnt">...<\span></p>
 	`
-
 const bc = document.createElement("div")
-bc.style = `margin:10px;display: flex;justify-content: center;align-items: center;`
+bc.style = `width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center`
 bc.innerHTML = `
-	<span id = "message">If you are not connectting to sever. Please refresh the page</span>
-	<span id = "name">Undefined</span>
-`
-const otherCarInfo = document.createElement("div")
-	otherCarInfo.innerHTML = `
 	<style>
 		table {
 		font-family: arial, sans-serif;
@@ -60,19 +72,65 @@ const otherCarInfo = document.createElement("div")
 		tr:nth-child(even) {
 		background-color: #dddddd;
 		}
+		.message{
+			background-color: powderblue;
+			padding: 10px;
+			align-content:center;
+			justify-content:center;
+		}
+		h1{
+			padding: 10px;
+			align-content:center;
+			justify-content:center;
+		}
 	</style>
-	<h2>CarNearby</h2>
-	<table id="car-table">
-		<tr>
-			<th>Name Car</th>
-			<th>Speed</th>
-			<th>Want to take l/r</th>
-			<th>Distance (m)</th>
-			<th>Angle</th>
-		</tr>
-	</table>
-	`
+	<h1> 
+		This a a boardcase online
+	</h1>
+	<div id = "message" class = "mess" >
+		If you are not connectting to sever. Please refresh the page
+	</div>
+	<p id = "name" class = "mess">Undefined</p>
 
+	<h2>Warning</h2>
+	<table id="warningTable">
+	<tr>
+		<th>Name Car</th>
+		<th>Message</th>
+	</tr>
+	</table>
+		`
+const otherCarInfo = document.createElement("div")
+otherCarInfo.innerHTML = `
+<style>
+	table {
+	font-family: arial, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
+	}
+	td, th {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 8px;
+	}
+	tr:nth-child(even) {
+	background-color: #dddddd;
+	}
+</style>
+<h2>CarNearby</h2>
+<table id="car-table">
+	<tr>
+		<th>Name Car</th>
+		<th>Speed</th>
+		<th>Want to take l/r</th>
+		<th>Distance (m)</th>
+		<th>Angle</th>
+	</tr>
+</table>
+`
+let table = otherCarInfo.querySelector('#car-table');
+let myWarning = bc.querySelector("#warningTable");
+setInterval(checkCollision, 1000);
 // ggmap -----------------------
 const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = {}) => {
 	await loadScript(box.window, `https://maps.googleapis.com/maps/api/js?key=${apikey}`);
@@ -152,36 +210,27 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 				map.setCenter(currentPos)
 				myMarker.setPosition(currentPos)
 			}
-			
-
-			let myint;
 			const cont = control.querySelector("#continue")
 			if (cont) {
 				cont.addEventListener("click", () => {
-					myint = setInterval(runM,1000);
+					myint = setInterval(runM, 1000);
+					currentSpeed = initSpeed;
 				})
 			}
 			const st = control.querySelector("#stop")
 			if (st) {
 				st.addEventListener("click", () => {
 					clearInterval(myint);
+					currentSpeed = 0;
 				})
 			}
 			
-			console.log("Draw a marker: " + baseInfo.name)
+			// console.log("Draw a marker: " + baseInfo.name)
 		}
 	})
-	let newmarker = new box.window.google.maps.Marker({
-		draggable: false,
-		icon: {
-			path: box.window.google.maps.SymbolPath.CIRCLE,
-			scale: 5,
-		},
-	});
-	newmarker.setMap(null);
+
 	socket.on("addNearby", markers => { 
-		// console.log(markers);
-		let table = otherCarInfo.querySelector('#car-table');
+		// console.log(markers)
 		while (table.rows.length > 1) {
 			table.deleteRow(1);
 		}
@@ -216,13 +265,41 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 				anglecell.textContent = calculateAngle(a,markers[j].slope);
 
 				if (nearbyCar.has(markers[j].name) == false) {
-					nearbyCar.set(markers[j].name, 1);
-					console.log(`add a near by marker car !, ${newmarker.getLabel()}`)
-					newmarker.setMap(map);
+					// run only one time
+					nearbyCar.set(markers[j].name,1);
+					// console.log(`add a near by marker car !, ${markers[j].name}`)
+					let newmarker = new box.window.google.maps.Marker({
+						draggable: false,
+						icon: {
+							path: box.window.google.maps.SymbolPath.CIRCLE,
+							scale: 5,
+						},
+						map: map,
+						label: markers[j].name,
+					});
+					nearMarkers.push(newmarker);
 				}
-				newmarker.setPosition({ lat: markers[j].location.lat, lng: markers[j].location.lng });	
+				else {
+					if (nearMarkers[j] != undefined) {
+						// console.log(`have markers ${nearMarkers[j].getLabel()}`)
+						nearMarkers[j].setPosition({ lat: markers[j].location.lat, lng: markers[j].location.lng });	
+					}
+					else {
+						let newone  = new box.window.google.maps.Marker({
+							draggable: false,
+							icon: {
+								path: box.window.google.maps.SymbolPath.CIRCLE,
+								scale: 5,
+							},
+							map: map,
+							label: markers[j].name,
+						});
+						nearMarkers[j] = newone;
+					}
+				}
 			}
 		}
+		// console.log(nearMarkers)
 	})
 	box.injectNode(ggMap);
 }
@@ -426,5 +503,54 @@ function calculateAngle(m1, m2) {
 	let rs = angle * (180 / Math.PI);
 	if (rs < 0) rs = -rs;
 	return rs;
+}
+function checkCollision() {
+	const rows = table.getElementsByTagName('tr');
+	let cells;
+	for (let i = 1; i < rows.length; i++) {
+		if (haveColli == false) {
+			cells = rows[i].getElementsByTagName('td');
+			const dis = cells[3].textContent;
+			if (dis < 7) {
+				const angle = cells[4].textContent;
+				if (angle > 80) {
+					const speed = cells[1].textContent;
+					// if (speed > 0) {
+						haveColli = true;
+						setWarning(cells[0].textContent);
+						console.log("Collided !!!")
+						// }
+					}
+				}
+				else {
+					haveColli = false;
+					setWarning(cells[0].textContent);
+				}
+		}
+	}
+}
+function setWarning(name) {
+	if (haveColli) {
+		// warn to driver
+		const newRow = myWarning.insertRow();
+		var nameCell = newRow.insertCell();
+		nameCell.textContent = name;
+		var warningCell = newRow.insertCell();
+		warningCell.textContent = 'Collide !!';
+		// auto set speed
+		currentSpeed = 0;
+		// stop the camera
+		clearInterval(myint);
+	}
+	else {
+		const Wrows = myWarning.getElementsByTagName('tr');
+		let Wcells;
+		for (let i = 1; i < Wrows.length; i++) {
+			Wcells = Wrows[i].getElementsByTagName('td');
+			if (Wcells[0].textContent == name) {
+				myWarning.deleteRow(i);
+			}
+		}
+	}
 }
 export default plugin
