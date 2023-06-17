@@ -27,5 +27,6 @@ Our sever is in `index.js` file. Our plugin source code is in `plugin.js`.
 ```
   yarn start 
 ```
+5. If the map doesn't load the right position: reload the page or check the sever
   
   
