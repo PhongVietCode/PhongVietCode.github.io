@@ -13,7 +13,7 @@ let nearMarkers = [];
 let nearbyCar = new Map();
 var maxSpeed = 100;
 const initSpeed = 10;
-let currentSpeed = 10;
+let currentSpeed = 0;
 let myCarname = "";
 let distance = 0;
 let initialLeft = false;
@@ -404,7 +404,7 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 			}
 		})
 	}
-	simulator("Vehicle.Speed", "get", () => {
+	simulator("Vehicle.ADAS.CruiseControl.SpeedSet", "get", () => {
 		return currentSpeed;
 	});
 	simulator("Vehicle.Body.Lights.IsLeftIndicatorOn", "set", (value) => {
@@ -489,12 +489,12 @@ function toRadians(degrees) {
 	return degrees * (Math.PI / 180);
 }
 function runMarker(a, b, currentPos) {
-	currentPos.lat = currentPos.lat + 0.00001;
+	currentPos.lat = currentPos.lat + 0.00000000000000000001;
 	currentPos.lng = a * currentPos.lat + b;
 	return currentPos;
 }
 function runMarkerR(a, b, currentPos) {
-	currentPos.lat = currentPos.lat - 0.00001;
+	currentPos.lat = currentPos.lat - 0.00000000000000000001;
 	currentPos.lng = a * currentPos.lat + b;
 	return currentPos;
 }
