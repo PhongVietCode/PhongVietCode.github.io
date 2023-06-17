@@ -27,7 +27,8 @@ let currentInformation = { name: myCarname };
 let timeInterval = 10;
 let step = 0.0000001;
 let initstep = 0.0000001;
-
+let des; 
+let route;
 const control = document.createElement("div")
 control.style = 'width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center'
 control.innerHTML = `
@@ -173,13 +174,14 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 			currentInformation.name = myCarname;
 			haveWriteCurrentLocation = true;
 			currentPos = baseInfo.location;
+			des = baseInfo.des;
 			myMarker.setMap(map);
 			myMarker.setPosition(currentPos);
 			map.setCenter(currentPos);
 			map.setHeading(baseInfo.heading)
 			let myRoad = [baseInfo.location, baseInfo.des];
 			// KHI CONNECT THI CHAY LUON MOT LAN DUY NHAT
-			const route = new box.window.google.maps.Polyline({
+			route = new box.window.google.maps.Polyline({
 				path: myRoad,
 				geodesic: true,
 				strokeColor: "#45b6fe",
@@ -493,6 +495,7 @@ function toRadians(degrees) {
 function runMarker(a, b, currentPos) {
 	currentPos.lat = currentPos.lat + step;
 	currentPos.lng = a * currentPos.lat + b;
+	route.setPath([currentPos, des]);
 	return currentPos;
 }
 function runMarkerR(a, b, currentPos) {
