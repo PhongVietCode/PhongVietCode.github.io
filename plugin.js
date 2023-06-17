@@ -230,7 +230,6 @@ const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = 
 				})
 			}
 			
-			// console.log("Draw a marker: " + baseInfo.name)
 		}
 	})
 
@@ -377,10 +376,11 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 		for (let i = 1; i < rows.length; i++) {
 			const cells = rows[i].getElementsByTagName('td');
 			const firstCell = cells[0].textContent;
-		  
-			if (firstCell === name) {
-			  foundRow = rows[i];
-			  break;
+			const secondCell = cells[1].textContent;
+
+			if (firstCell === name && secondCell === "Emergency !") {
+					foundRow = rows[i];
+					break;
 			}
 		}
 		if (foundRow == null) {
