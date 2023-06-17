@@ -23,6 +23,7 @@ let a = 1;
 let b = 1;
 let myint;
 let haveColli = false;
+let currentInformation = {};
 const control = document.createElement("div")
 	control.style = 'width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center'
 	control.innerHTML = `
@@ -53,7 +54,7 @@ const control = document.createElement("div")
 				<button type="button" id="stop" class ="btn">Stop the car</button>
 				<button type="button" id="continue" class ="btn">Run the car</button>
 
-		<p>You want to : <span id="cnt">...<\span></p>
+		<p>You want to : <span id="cnt">...</span></p>
 	`
 const bc = document.createElement("div")
 bc.style = `width:100%;height:100%;display:grid;align-content:center;justify-content:center;align-items:center`
@@ -348,7 +349,13 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 	if (emergencyBtn) {
 		emergencyBtn.addEventListener("click", () => {
 			console.log('EmergencyBtn click');
-			control.querySelector("#cnt").innerHTML = 'Request for emergency case'
+			control.querySelector("#cnt").innerHTML = 'Request for emergency case';
+			currentInformation = {
+				name: myCarname,
+				lat: currentPos.lat,
+				lng: currentPos.lng
+			};
+			console.log(currentInformation);
 			socket.emit('emergency-case', currentInformation);
 			// add button for cancel
 			if (!control.querySelector('#cancel-btn')) {

@@ -48,6 +48,10 @@ io.on('connection',(socket)=> {
   i = io.engine.clientsCount - 1;
   console.log(`client: ${io.engine.clientsCount}, marker count: ${markers.length}`)
   // console.log(markers)
+
+  socket.on('emergency-case', (data) => {
+    io.emit('emergency-case-request',data)
+  })
 })
 server.listen(3000, () => {
   console.log('listening on *:3000');
