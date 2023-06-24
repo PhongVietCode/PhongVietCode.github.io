@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Phong Code</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class ="container">
+        <div class ="google-map" style="color: antiquewhite;display: grid;align-items: center;justify-items: center;">
+            <img src ="assest/map.png" style="width: 100%;height: 100%;object-fit: contain;border-radius: 30px;">
+        </div>
+        
+        <div class ="meter-object">
+            <div class = "meter-head">
+                <div class="icon-container">
+                    <div class="turn-left">
+                        <img src="assest/turnleft.svg">
+                    </div>
+                    <div class="normal-warn">
+                        <img src="assest/seatbell.svg">
+                        <img src="assest/door.svg">
+                        <img src="assest/headlight.svg"class="headlight">
+                        
+                    </div>
+                    <div class="turn-right">
+                        <img src="assest/turnright.svg">
+                    </div>
+                </div>
+            </div>
+            <div class="meter-body">
+                <span class="speed-container" >
+                    <div class="speed-oval-line" >
+                        <div class="speed-fill" ></div>
+                        <div class="speed-outline"></div>
+                        <span class="triangle"></span>
+                        <div class="speed-cover">
+                            <span class="speed-icon" 
+                            style="display: flex; align-items: center;justify-content: center;margin-top: 30px;" >
+                                <img src="assest/speed icon.svg">
+                            </span>
+                            <span class="speed-counter" >
+                                <span class="speed-number">0</span>
+                                <span class="speed-unit" >Km/h</span>
+                            </span>
+                            <div class="rpm-mode">
+                                <span class="speed-dot" id="mode-off">P</span>
+                                <span class="speed-dot" id="mode-off">R</span>
+                                <span class="speed-dot" id="mode-off">N</span>
+                                <span class="speed-dot" id="mode-on">D</span>
+                            </div>
+                        </div>
+                    </div>
+                </span>
+            </div>
+
+            <div class="meter-tail">
+                <div class="rpm-meter-container">
+                    <div class="rpm-meter-top-cover"></div>
+
+                    <div class="rpm-meter-line"></div>
+                    <div class="center-point"></div>
+                    <div class="rpm-meter-cover"></div>
+                    <div class="rpm-meter-scale rpm-meter-scale-1"></div>
+                    <div class="rpm-meter-scale rpm-meter-scale-2"></div>
+                    <div class="rpm-meter-scale rpm-meter-scale-3"></div>
+                    <div class="rpm-meter-scale rpm-meter-scale-4"></div>
+                    <div class="rpm-meter-scale rpm-meter-scale-5"></div>
+                    <div class="rpm-meter-scale rpm-meter-scale-6"></div>
+                    <div class="rpm-meter-scale rpm-meter-scale-7"></div>
+                    <div class="rpm-meter-scale rpm-meter-scale-8"></div>
+                    <div class="rpm-meter-bottom-cover"></div>
+                    <div class="arrow-container">
+                        <div class="arrow-wrapper">
+                            <div class="arrow">
+
+                            </div>
+                            <span class="rpm-number">x100 RPM</span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="fuel-meter-container">
+                    <div class="fuel-cover"></div>
+                    <div class="fuel-cover-bottom"></div>
+
+                    <div class="arrow-container">
+                        <div class="arrow-wrapper">
+                            <div class="arrow fuel-arow"></div>
+                            
+                            <span class="fuel-text">
+                                <span class="fuel-icon">
+                                <image src="assest/lucide_fuel.svg"></image>
+                            </span>
+                        </div>
+                        <span style="color: #fff;margin-left:90px;">F</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class ="total-feature">
+            Ahoho
+        </div>
+        
+    </div>
+    <script type="text/javascript" src="app.js"></script>
+</body>
+</html>
