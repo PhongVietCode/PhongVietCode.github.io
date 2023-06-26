@@ -8,11 +8,19 @@
     width: 1504px;
     height: 752px;
 }
+/* -----PART 1----- */  
 .google-map{
     width: 45%;
     height: 834px;
     background-color: #333333;
 }
+
+.google-map-container{
+    display: flex;
+    margin-top: 190px;
+    border-radius: 20px;
+}
+/* -----PART 2----- */  
 .meter-object{
     background-color: #333333;
     width: 30%;
@@ -21,7 +29,7 @@
 .total-feature{
     width: 25%;
     height: 834px;
-    background-color: yellow;
+    background-color: #333;
 }
 
 .meter-head{
@@ -346,8 +354,92 @@
     margin-left: 14px;
 }   
 
+/* -----PART 3----- */ 
 
+.total-feature{
+    display: flex;
+    align-items: center;
+}
+.feature-container{
+    width: 97%;
+    height: 96%;
+    background-color: #1a1a1a;
+    margin: auto;
+    border-radius: 20px;
+    margin-right: 10px ;
+}
 
+.head-info{
+    width: 100%;
+    height: 5%;
+    color: #fff;
+    display: flex;
+    justify-content:space-around;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+.head-info .weather{
+    transform: scale(0.7);
+}
 
-
+.main-info{
+    width: 100%;
+    height: 60%;
+}
+.main-info-container{
+    display: grid;
+    align-items: center;
+    justify-content: center;
+}
+.main-info-line{
+    width: 100%;
+    height: 50px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+.main-info-car{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.nav{
+    height: 27%;
+    display: flex;
+    align-items: flex-end;
+    margin: 8px;
+}
+.nav-car{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100%;
+}
+li {
+    float: left;
+}
+li a {
+    display: block;
+    color: #333;
+    text-align: center;
+    padding: 12px 13px;
+    text-decoration: none;
+    border-radius: 10px;
+}
+.active{
+    background-color:#fff;
+    border-radius: 10px;
+}
+.inactive{
+    /* background-color:aqua; */
+    border-radius: 10px;
+    color: yellow;
+}
+.nav-car i{
+    font-size: 25px;
+    padding:0 10px;
+}
 
