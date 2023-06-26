@@ -1,0 +1,16 @@
+<svg width="55" height="24" viewBox="0 0 55 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 9">
+<path id="Polygon 3" d="M31.7307 14.494C29.9538 13.3061 29.9538 10.6939 31.7307 9.50597L37.5827 5.59385C39.5761 4.26123 42.25 5.69006 42.25 8.08788L42.25 15.9121C42.25 18.3099 39.5761 19.7388 37.5827 18.4061L31.7307 14.494Z" stroke="white" stroke-width="2"/>
+<path id="Polygon 4" d="M24.2693 14.494C26.0462 13.3061 26.0462 10.6939 24.2693 9.50597L18.4173 5.59385C16.4239 4.26123 13.75 5.69006 13.75 8.08788L13.75 15.9121C13.75 18.3099 16.4239 19.7388 18.4173 18.4061L24.2693 14.494Z" stroke="white" stroke-width="2"/>
+<g id="Group 7">
+<rect id="Rectangle 22" x="51.9282" width="4" height="8" rx="2" transform="rotate(60 51.9282 0)" fill="white"/>
+<rect id="Rectangle 23" x="55" y="10" width="4" height="8" rx="2" transform="rotate(90 55 10)" fill="white"/>
+<rect id="Rectangle 24" x="53.4853" y="20.6569" width="4" height="8" rx="2" transform="rotate(135 53.4853 20.6569)" fill="white"/>
+</g>
+<g id="Group 8">
+<rect id="Rectangle 22_2" width="4" height="8" rx="2" transform="matrix(-0.5 0.866025 0.866025 0.5 3.07178 0)" fill="white"/>
+<rect id="Rectangle 23_2" width="4" height="8" rx="2" transform="matrix(4.37114e-08 1 1 -4.37114e-08 0 10)" fill="white"/>
+<rect id="Rectangle 24_2" width="4" height="8" rx="2" transform="matrix(0.707107 0.707107 0.707107 -0.707107 1.51471 20.6569)" fill="white"/>
+</g>
+</g>
+</svg>
