@@ -16,4 +16,4 @@ function setSpeed(speed, value) {
     }
     speedNumber.querySelector(".speed-number").textContent = `${Math.round(value*100)}`
 }
-setSpeed(speed, 0.9)
+setSpeed(speed, 1.1)
