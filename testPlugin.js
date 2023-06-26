@@ -8,6 +8,7 @@ const API_HOST = "https://app.digitalauto.tech"
 //-------------------------
 // ini var
 let ggMap;
+let map;
 let currentPos = { lat: 0, lng: 0 };
 let nearMarkers = [];
 let nearbyCar = new Map();
@@ -31,24 +32,6 @@ let des;
 let route;
 
 
-const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = {}) => {
-	await loadScript(box.window, `https://maps.googleapis.com/maps/api/js?key=${apikey}`);
-	let myMarker = new box.window.google.maps.Marker({
-		draggable: false,
-	});
-	
-	ggMap = document.createElement("div");
-	ggMap.setAttribute("style", `height: 100%; width: 100%;`);
-
-	const map = new box.window.google.maps.Map(ggMap, {
-		zoom: 30,
-		center: initialCenter,
-		heading: 0,
-		tilt: 90,
-		mapId: "a8dea08fb82841f5",
-	});
-
-}
 
 const biggestPlugin = document.createElement('div')
 biggestPlugin.style = 'width: 10px; height: 10px; object-fit: contain;'
@@ -209,18 +192,29 @@ biggestPlugin.innerHTML = `
     </div>
 </div>
 </div>`
-const container = biggestPlugin.querySelector(".container")
-const ggContainer = container.querySelector(".google-map")
-ggContainer.appendChild = ggMap; 
+const GoogleMapsLocation = async (apikey, box, initialCenter, { icon = null } = {}) => {
+	await loadScript(box.window, `https://maps.googleapis.com/maps/api/js?key=${apikey}`);
+	let myMarker = new box.window.google.maps.Marker({
+		draggable: false,
+	});
+    const container = biggestPlugin.querySelector(".container")
+    const ggContainer = container.querySelector(".google-map")
+    //ggContainer.innerHTML = ggMap; 
+	map = new box.window.google.maps.Map(ggContainer, {
+		zoom: 30,
+		center: initialCenter,
+		heading: 0,
+		tilt: 90,
+		mapId: "a8dea08fb82841f5",
+	});
+    console.log(map);
+
+}
 
 const plugin = ({ widgets, simulator, vehicle }) =>{
     widgets.register("biggestPlugin", (box) => {
+        box.injectNode(biggestPlugin);
         GoogleMapsLocation(PLUGINS_APIKEY, box, currentPos)
-        box.injectNode(biggestPlugin)
-    })
-    widgets.register("GoogleMapsLocation", (box) => {
-        GoogleMapsLocation(PLUGINS_APIKEY, box, currentPos)
-        box.injectNode(ggMap)
     })
 }
 export default plugin
