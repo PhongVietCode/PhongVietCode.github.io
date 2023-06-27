@@ -3,38 +3,79 @@
     padding: 0;
     font-family: sans-serif;
 }
+.bg{
+    width: 100%;
+    height: 900px;
+    background-image: url('assest/viewcar.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
 .container{
     display: flex;
     width: 1504px;
-    height: 752px;
+    height: 834px;
+    position: relative;
+    transform: scale(0.6);
+    top: 181px;
+    left:100px;
+    border-width: 10px;
+    border-radius: 30px;
+    position: relative;
+}
+
+.control-bar{
+    background-color: #fff;
+    position: absolute;
+    top: 384px;
+    left: 1409px;
+    margin: 10px;
+}
+.user-input{
+    position: absolute;
+    border: 1px solid black;
+    text-align: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 30px;
+    top:10px;
+    padding: 10px;
+    left: 15%;
+}
+.user-account{
+    top:66px;
 }
 /* -----PART 1----- */  
 .google-map{
-    width: 45%;
-    height: 834px;
-    background-color: #333333;
+    width: 110%;
+    height: 100%;
+    background-color: rgb(51, 51, 51);
+    border-width: 10px;
+    border-radius: 30px;
 }
 
-.google-map-container{
-    display: flex;
-    margin-top: 190px;
-    border-radius: 20px;
-}
 /* -----PART 2----- */  
 .meter-object{
-    background-color: #333333;
+    /* background-color:  rgba(51, 51, 51, 1); */
+    background-image: linear-gradient(to right,rgba(51, 51, 51, 1),rgba(51, 51, 51, 0.7));
     width: 30%;
     height: 834px;
+    z-index: 5;
+    left: 0;
+    position: absolute;
+    border-radius: 30px;
+    transform: scale(0.97);
 }
 .total-feature{
     width: 25%;
     height: 834px;
-    background-color: #333;
+    left: 75%;
+    position: absolute;
+    z-index: 5;
 }
 
 .meter-head{
     width: 100%;
-    background-color: #333;
+    /* background-image: linear-gradient(to right,rgba(51, 51, 51, 1),rgba(51, 51, 51, 0.5)); */
     height: 15%;
 }
 .meter-body{
@@ -48,7 +89,7 @@
 .speed-container{
     width: 25em;
     height: 25em;
-    background-color: #161b27;
+    background-color: rgb(22, 27, 39);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -167,23 +208,24 @@
 }
 .meter-tail{
     display:flex;
-    background-color: #333333;
+    /* background-color: rgb(51, 51, 51,0.5); */
     align-items: center;
     justify-content: center;
-    height: 25%;
+    height: 24%;
+    padding-top: 10px;
 }
 .rpm-meter-container{
     width: 45%;
     height: 95%;
     background-image: linear-gradient(to right, rgb(86, 85, 85), rgb(163, 157, 157), rgb(98, 95, 95));
-    box-shadow: 0 0 10px #a1a1a1;
+    /* box-shadow: 0 0 10px #a1a1a1; */
     margin-bottom: 20px;
     border-radius: 50%;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* overflow: hidden; */
+    overflow: hidden;
 }
 .center-point{
     width: 10px;
@@ -295,7 +337,7 @@
     width: 45%;
     height: 100%;
     background-image: linear-gradient(to right, rgb(85, 85, 237), rgb(140, 205, 227), rgb(85, 85, 237));
-    box-shadow: 0 0 10px #67e8e8;
+    /* box-shadow: 0 0 10px #67e8e8; */
     margin-bottom: 20px;
     margin-left: 10px;
     border-radius: 50%;
@@ -304,7 +346,7 @@
     align-items: center;
     justify-content: center;
     margin-left: 15px;
-    /* overflow: hidden; */
+    overflow: hidden;
 }
 .fuel-cover{
     width: 85%;
@@ -363,7 +405,8 @@
 .feature-container{
     width: 97%;
     height: 96%;
-    background-color: #1a1a1a;
+    background-image: linear-gradient(to left,rgba(51, 51, 51, 1),rgba(51, 51, 51, 0.7));
+
     margin: auto;
     border-radius: 20px;
     margin-right: 10px ;
@@ -403,7 +446,15 @@
 .main-info-car{
     display: flex;
     align-items: center;
-    justify-content: center;
+    flex-direction: column;
+}
+.status{
+    position: relative;
+    text-align: center;
+    font-size: 40px;
+    font-weight: bolder;
+    color: #fff;
+    top: -63px;
 }
 .nav{
     height: 27%;
@@ -442,4 +493,3 @@ li a {
     font-size: 25px;
     padding:0 10px;
 }
-

@@ -133,6 +133,168 @@ otherCarInfo.innerHTML = `
 	</tr>
 </table>
 `
+
+const interFace = document.createElement("div")
+interFace.innerHTML = `
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div class ="container">
+<div class ="google-map"">
+	<div class="google-map-container">
+		<img src ="http://127.0.0.1:5500/assest/map.png" style="width: 100%;height: 100%;object-fit: contain;border-radius: 30px;">
+	</div>
+</div>
+
+<div class ="meter-object">
+	<div class = "meter-head">
+		<div class="icon-container">
+			<div class="turn-left">
+				<img src="http://127.0.0.1:5500/assest/turnleft.svg">
+			</div>
+			<div class="normal-warn">
+				<img src="http://127.0.0.1:5500/assest/seatbell.svg">
+				<img src="http://127.0.0.1:5500/assest/door.svg">
+				<img src="http://127.0.0.1:5500/assest/headlight.svg"class="headlight">
+				
+			</div>
+			<div class="turn-right">
+				<img src="http://127.0.0.1:5500/assest/turnright.svg">
+			</div>
+		</div>
+	</div>
+	<div class="meter-body">
+		<span class="speed-container" >
+			<div class="speed-oval-line" >
+				<div class="speed-fill" ></div>
+				<div class="speed-outline"></div>
+				<span class="triangle"></span>
+				<div class="speed-cover">
+					<span class="speed-icon" 
+					style="display: flex; align-items: center;justify-content: center;margin-top: 30px;" >
+						<img src="http://127.0.0.1:5500/assest/speed icon.svg">
+					</span>
+					<span class="speed-counter" >
+						<span class="speed-number">0</span>
+						<span class="speed-unit" >Km/h</span>
+					</span>
+					<div class="rpm-mode">
+						<span class="speed-dot" id="mode-off">P</span>
+						<span class="speed-dot" id="mode-off">R</span>
+						<span class="speed-dot" id="mode-off">N</span>
+						<span class="speed-dot" id="mode-on">D</span>
+					</div>
+				</div>
+			</div>
+		</span>
+	</div>
+
+	<div class="meter-tail">
+		<div class="rpm-meter-container">
+			<div class="rpm-meter-top-cover"></div>
+
+			<div class="rpm-meter-line"></div>
+			<div class="center-point"></div>
+			<div class="rpm-meter-cover"></div>
+			<div class="rpm-meter-scale rpm-meter-scale-1"></div>
+			<div class="rpm-meter-scale rpm-meter-scale-2"></div>
+			<div class="rpm-meter-scale rpm-meter-scale-3"></div>
+			<div class="rpm-meter-scale rpm-meter-scale-4"></div>
+			<div class="rpm-meter-scale rpm-meter-scale-5"></div>
+			<div class="rpm-meter-scale rpm-meter-scale-6"></div>
+			<div class="rpm-meter-scale rpm-meter-scale-7"></div>
+			<div class="rpm-meter-scale rpm-meter-scale-8"></div>
+			<div class="rpm-meter-bottom-cover"></div>
+			<div class="arrow-container">
+				<div class="arrow-wrapper">
+					<div class="arrow">
+
+					</div>
+					<span class="rpm-number">x100 RPM</span>
+				</div>
+			</div>
+
+		</div>
+		<div class="fuel-meter-container">
+			<div class="fuel-cover"></div>
+			<div class="fuel-cover-bottom"></div>
+
+			<div class="arrow-container">
+				<div class="arrow-wrapper">
+					<div class="arrow fuel-arow"></div>
+					
+					<span class="fuel-text">
+						<span class="fuel-icon">
+						<image src="http://127.0.0.1:5500/assest/lucide_fuel.svg"></image>
+					</span>
+				</div>
+				<span style="color: #fff;margin-left:90px;">F</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class ="total-feature">
+	<div class="feature-container">
+
+		<div class="head-info">
+			<span class="time" style="font-weight: bold;">11:11</span>
+			<span class="weather" style="font-weight: bold;"><img src="assest/weather.svg">32℃</span>
+			<span class="day"style="font-weight: bold;" >01/07/2023</span>
+
+		</div>
+		<div class="main-info">
+			<div class="main-info-line main-info-dis">
+				<span class="main-info-dis-icon" style="display: flex; align-items: center;">
+					<img src="http://127.0.0.1:5500/assest/dis.svg">
+					<span style="margin-left: 15px;">DIS</span>
+				</span>
+				<span class="main-info-dis-number" style="font-weight: medium;font-size: 2em;">110</span>
+				<span>Km</span>
+			</div>
+			<div class="main-info-line main-info-temp">
+				<span class="main-info-temp-icon" style="display: flex;align-items: center;">
+					<img src="http://127.0.0.1:5500/assest/temp.svg">
+					<span style="margin-left: 15px;">TEMP</span>
+				</span>
+				<span class="main-info-temp-number"style="font-weight: medium;font-size: 2em;">+26.2</span>
+				<span>℃</span>
+			</div>
+			<div class="main-info-line main-info-dur">
+				<span class="main-info-dur-icon" style="display: flex; align-items: center;">
+					<img src="http://127.0.0.1:5500/assest/dur.svg">
+					<span style="margin-left: 15px;">DUR</span>
+				</span>
+				<span class="main-info-dur-number"style="font-weight: medium;font-size: 2em;">189</span>
+				<span >mins</span>
+			</div>
+			<div class="main-info-car">
+				<img src="http://127.0.0.1:5500/assest/mycar.png">
+			</div>    
+		</div>
+
+		<div class="nav">
+			<ul class="nav-car">
+				<li class="active"><a href="#total-info">
+					<i class="fa fa-car" style="color: #757272 ;"></i>
+				</a></li>
+				<li class="inactive"><a href="#car-fan">
+					<i class="fa fa-snowflake-o"style="color: #757272 ;"></i>
+				</a></li>
+				<li class="inactive"><a href="#car-mic">
+					<i class="fa fa-microphone"style="color: #757272 ;"></i>
+				</a></li>
+				<li class="inactive"><a href="#car-bluetooth">
+					<i class="fa fa-bluetooth"style="color: #757272 ;"></i>
+				</a></li>
+				<li><a href="#car-noti">
+					<i class="fa fa-warning"style="color: #757272 ;"></i>
+				</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+</div>
+`
 let table = otherCarInfo.querySelector('#car-table');
 let myWarning = bc.querySelector("#warningTable");
 setInterval(checkCollision, timeInterval);
@@ -452,6 +614,10 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 		(box) => {
 			GoogleMapsLocation(PLUGINS_APIKEY, box, currentPos)
 		}
+	)
+	widgets.register("interFace",(box)=>{
+		box.injectNode(interFace)
+	}
 	)
 }
 function slope(myRoad) {

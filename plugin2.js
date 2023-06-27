@@ -501,7 +501,7 @@ mainBoard.innerHTML =
 		<button type="button" id="continue" class ="btn">Run the car</button>
 		<p>You want to : <span id="cnt">...<\span></p>
 
-		<div class="user-input-route">
+		<div class="user-input-route user-input">
 			<div>
 				<div>
 					<input type="text" id ="from" placeholder="Origin">
@@ -510,6 +510,18 @@ mainBoard.innerHTML =
 			<div>
 				<div>
 					<input type="text" id ="to" placeholder="Destination">
+				</div>
+			</div>
+		</div>
+		<div class="user-input user-account">
+			<div>
+				<div>
+					<input type="text" placeholder="tài khoản">
+				</div>
+			</div>
+			<div>
+				<div>
+					<input type="text" placeholder="mật khẩu">
 				</div>
 			</div>
 		</div>
@@ -522,7 +534,7 @@ let bg = mainBoard.querySelector(".bg");
 const plugin = ({ widgets, simulator, vehicle }) => {
 	const control = bg.querySelector(".control-bar");
 	const input = control.querySelector(".user-input-route");
-
+	const account = control.querySelector(".user-account");
 	const path = [
 		{lat:10.843298,lng:  106.769750},
 		{lat: 10.841280, lng: 106.764603}
