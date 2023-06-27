@@ -540,6 +540,11 @@ function intercept(myRoad,slope) {
 	return (myRoad[0].lng - slope * myRoad[0].lat);
 }
 
+
+function calculateRPM(value){
+	let rpm = Math.round(value*60/(7.2*Math.PI*0.25))
+	return rpm
+}
 function setSpeed(value){
     if (value < 0 || value > 2) return;
     
