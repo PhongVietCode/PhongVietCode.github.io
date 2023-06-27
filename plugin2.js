@@ -531,71 +531,64 @@ socket.emit("requestMarker", "Hello I am here");
 
 40.631663, -74.329692
 40.630410, -74.329131
+let turnLeftBtn = control.querySelector('#btn-turn-left')
+if (turnLeftBtn) {
+	control.querySelector("#cnt").textContent = 'turn left';
+	turnLeftBtn.addEventListener("click", () => {
+		const leftContainer = iconContainer.querySelector(".turn-left");
+		const leftArrow = leftContainer.querySelector('#left-arrow');
+		console.log("left click")
+		if (leftArrow) {
+			console.log("have  click")
+			if (blinkInterval == null) {
+				blinkInterval = setInterval(() => {
+					leftArrow.style.opacity = (leftArrow.style.opacity == '1') ? '0.3' : '1';
+					console.log("blinking")
+				}, 400);
+				leftArrow.style.filter = "hue-rotate(-60deg)";
+			}
+			else {
+				clearInterval(blinkInterval);
+				blinkInterval = null;
+				leftArrow.style.opacity = '1';
+				count = 0;
+				leftArrow.style.filter = ""
+			}
+
+		}
+	});
+}
+let turnRightBtn = control.querySelector('#btn-turn-right')
+if (turnRightBtn) {
+	control.querySelector("#cnt").textContent = 'turn right';
+	turnRightBtn.addEventListener("click", () => {
+		const leftContainer = iconContainer.querySelector(".turn-right");
+		const rightArrow = leftContainer.querySelector('#right-arrow');
+		console.log("left click")
+		if (rightArrow) {
+			console.log("have  click")
+			if (blinkInterval == null) {
+				blinkInterval = setInterval(() => {
+					rightArrow.style.opacity = (rightArrow.style.opacity == '1') ? '0.3' : '1';
+					console.log("blinking")
+				}, 400);
+				rightArrow.style.filter = "hue-rotate(-60deg)";
+			}
+			else {
+				clearInterval(blinkInterval);
+				blinkInterval = null;
+				rightArrow.style.opacity = '1';
+				count = 0;
+				rightArrow.style.filter = ""
+			}
+		}
+	});
+}
 
 
 const plugin = ({ widgets, simulator, vehicle }) => {
 	const path = [{ lat: 0, lng: 0 }, { lat: 0, lng: 0 }]
 
-	let turnLeftBtn = control.querySelector('#btn-turn-left')
-	if (turnLeftBtn) {
-		control.querySelector("#cnt").textContent = 'turn left';
-		turnLeftBtn.addEventListener("click", () => {
-			const leftContainer = iconContainer.querySelector(".turn-left");
-			const leftArrow = leftContainer.querySelector('#left-arrow');
-			console.log("left click")
-			if (leftArrow) {
-				console.log("have  click")
-				count = count + 1; 
-				if (count % 2 == 0){
-					if (blinkInterval == null) {
-						blinkInterval = setInterval(() => {
-							leftArrow.style.opacity = (leftArrow.style.opacity == '1') ? '0.3' : '1';
-							console.log("blinking")
-						}, 400);
-						leftArrow.style.filter = "hue-rotate(-60deg)";
-					}
-					else {
-						clearInterval(blinkInterval);
-						blinkInterval = null;
-						leftArrow.style.opacity = '1';
-						count = 0;
-						leftArrow.style.filter = ""
-					}
-				}
-
-			}
-		});		
-	}
-	let turnRightBtn = control.querySelector('#btn-turn-right')
-	if (turnRightBtn) {
-		control.querySelector("#cnt").textContent = 'turn right';
-		turnRightBtn.addEventListener("click", () => {
-			const leftContainer = iconContainer.querySelector(".turn-right");
-			const rightArrow = leftContainer.querySelector('#right-arrow');
-			console.log("left click")
-			if (rightArrow) {
-				console.log("have  click")
-				count = count + 1; 
-				if (count % 2 == 0){
-					if (blinkInterval == null) {
-						blinkInterval = setInterval(() => {
-							rightArrow.style.opacity = (rightArrow.style.opacity == '1') ? '0.3' : '1';
-							console.log("blinking")
-						}, 400);
-						rightArrow.style.filter = "hue-rotate(-60deg)";
-					}
-					else {
-						clearInterval(blinkInterval);
-						blinkInterval = null;
-						rightArrow.style.opacity = '1';
-						count = 0;
-						rightArrow.style.filter = ""
-					}
-				}
-
-			}
-		});		
-	}
 	//----- WIDGET REGISTER-----//
 	widgets.register("map", (box) => {
 		GoogleMapsPluginApi(PLUGINS_APIKEY, box, path);
