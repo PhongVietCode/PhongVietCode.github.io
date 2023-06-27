@@ -1,6 +1,8 @@
 import { PLUGINS_APIKEY } from "./reusable/apikey.js";
 import loadScript from "./reusable/loadScript.js";
+import "./socket.io/client-dist/socket.io.js";
 //---------------------------------------------------//
+const socket = io('http://127.0.0.1:3000');
 
 let mapContainer = document.createElement("div"); // main map
 mapContainer.setAttribute("style", `position: height: 100%; width: 100%;`);
@@ -11,8 +13,11 @@ let svgMarker;
 let routeResult;
 let routeArray = [];
 let initialCenter = location;
-let step = 0.00001;
+const step = 0.00001;
 let running = false;
+let sieuphuctap;
+let currentPos;
+let myID;
 
 const mainBoard = document.createElement("div");
 mainBoard.innerHTML =
@@ -83,7 +88,7 @@ mainBoard.innerHTML =
 					<div class="rpm-meter-bottom-cover"></div>
 					<div class="arrow-container">
 						<div class="arrow-wrapper">
-							<div class="arrow">
+							<div class="arrow rpm-arrow">
 
 							</div>
 							<span class="rpm-number">x100 RPM</span>
@@ -97,7 +102,7 @@ mainBoard.innerHTML =
 
 					<div class="arrow-container">
 						<div class="arrow-wrapper">
-							<div class="arrow fuel-arow"></div>
+							<div class="arrow fuel-arrow"></div>
 							
 							<span class="fuel-text">
 								<span class="fuel-icon">
@@ -182,7 +187,7 @@ mainBoard.innerHTML =
 		<button type="button" id="runCar" class ="btn">Run the car</button>
 		<p>You want to : <span id="cnt">...<\span></p>
 
-		<div class="user-input-route user-input">
+		<div class="user-input-route">
 			<div>
 				<div>
 					<input type="text" id ="from" placeholder="Origin">
@@ -197,18 +202,7 @@ mainBoard.innerHTML =
 				<button type="button" id="submit" class ="btn" style ="margin-top: 10px">Submit your location</button>
 			</div>
 		</div>
-		<div class="user-input user-account">
-			<div>
-				<div>
-					<input type="text" placeholder="tài khoản">
-				</div>
-			</div>
-			<div>
-				<div>
-					<input type="text" placeholder="mật khẩu">
-				</div>
-			</div>
-		</div>
+		<span id = "user-status">No connection</span>
 	</div>
     </div>
     <script type="text/javascript" src="app.js"></script>
@@ -375,179 +369,96 @@ function showSteps(directionResult, map, box) {
 }
 function runMyCar(routeResult, map, box){
 	if (!routeResult || !map || running) return;
-	console.log("Phong");
 	// used variables
 	let j = 0;
 	let i = 0;
 	const myRoute = routeResult.routes[0].legs[0];
 	let myRouteSegment = myRoute.steps[i];
 	let path = myRouteSegment.path;
+	let myRoad = [{ lat: myRouteSegment.start_location.lat(), lng: myRouteSegment.start_location.lng() },
+		{ lat: myRouteSegment.end_location.lat(), lng: myRouteSegment.end_location.lng() }];
+	function slope(myRoad) {
+		if (myRoad[0].lat == myRoad[1].lat) {
+			return null;
+		}
+		return (myRoad[1].lng - myRoad[0].lng) / (myRoad[1].lat - myRoad[0].lat);
+	}
+	function intercept(myRoad,slope) {
+		if (slope === null) {
+			// vertical line
+			return myRoad[0].lat;
+		}
+		return (myRoad[0].lng - slope * myRoad[0].lat);
+	}
+	let a = slope(myRoad);
+	let b = intercept(myRoad, a);
+	let heading = box.window.google.maps.geometry.spherical.computeHeading(
+		myRoad[0],
+		myRoad[1]
+	);
+	map.setHeading(heading);
+	console.log("heading:" + heading);
+	mainMarker.setPosition(path[j]);
+	map.setCenter(path[j])
 	// RUN
-	const routeInterval = setInterval(() => {
-		let heading = box.window.google.maps.geometry.spherical.computeHeading(
-			myRouteSegment.path[j],
-			myRouteSegment.path[j+1]
-		);
-		map.setHeading(heading);
-		mainMarker.setPosition(path[j]);
-		map.setCenter(path[j])
-		j = j + 1;
-		if (j >= path.length - 1) {
-			j = 0;
-			i = i + 1;
-			myRouteSegment = myRoute.steps[i];
-			if (myRouteSegment) {
-				path = myRouteSegment.path;
-			}
-			else {
-				clearInterval(routeInterval)
+	sieuphuctap = setInterval(() => {
+		currentPos = mainMarker.getPosition();
+		map.setCenter(mainMarker.getPosition());
+		console.log(currentPos.lat());
+		if (heading < 120) {
+			mainMarker.setPosition({ lat: currentPos.lat() + step, lng: a * currentPos.lat() + b });
+			if (currentPos.lat() > myRoad[1].lat) {
+				i = i + 1;
+				myRouteSegment = myRoute.steps[i];
+				if (myRouteSegment) {
+					path = myRouteSegment.path;
+					myRoad = [{ lat: myRouteSegment.start_location.lat(), lng: myRouteSegment.start_location.lng() },
+								{ lat: myRouteSegment.end_location.lat(), lng: myRouteSegment.end_location.lng()}];
+					a = slope(myRoad);
+					b = intercept(myRoad, a);
+					heading = box.window.google.maps.geometry.spherical.computeHeading(
+						myRoad[0],
+						myRoad[1]
+					);
+					mainMarker.setPosition(myRouteSegment.start_location);
+					map.setHeading(heading);
+					console.log("heading:" + heading);
+				}
+				
 			}
 		}
-	}, 700);
-	
-	
-	// let myRoad = [{ lat: path[j].lat(), lng: path[j].lng() },
-	// 	{ lat: path[j + 1].lat(), lng: path[j + 1].lng() }];
-	// let a = slope(myRoad);
-	// let b = intercept(myRoad, a);
-	// const ratphuctap = setInterval(() => {
-	// 	let currentPos = mainMarker.getPosition();
-	// 	if (heading > 180) {
-	// 		mainMarker.setPosition({ lat: currentPos.lat() + step, lng: a * currentPos.lat() + b });
-	// 		map.setCenter(mainMarker.getPosition());
-	// 		if (mainMarker.getPosition().lat() > myRoad[1].lat) { // het 1 doan
-	// 			console.log("het 1 doan NHO");
-	// 			j = j + 1;
-	// 			if (j >= path.length - 1) { // het ca doan 
-	// 				console.log("het doan LON");
-	// 				j = 0;
-	// 				i = i + 1;
-	// 				if (i >= myRoute.steps.length) {	
-	// 					clearInterval(ratphuctap)
-	// 				}
-	// 				myRouteSegment = myRoute.steps[i];
-	// 				// ve path truoc 
-	// 				if (myRouteSegment) {
-	// 					path = myRouteSegment.path;
-	// 					new box.window.google.maps.Polyline({
-	// 						map: map,
-	// 						path: path,
-	// 						geodesic: true,
-	// 						strokeColor: "#45b6fe",
-	// 						strokeOpacity: 1.0,
-	// 						strokeWeight: 20,
-	// 					});
-	// 				}
-	// 			}
-	// 			if (myRouteSegment) {
-	// 				myRoad = [{ lat: path[j].lat(), lng: path[j].lng() },
-	// 				{ lat: path[j + 1].lat(), lng: path[j + 1].lng() }];
-	// 				a = slope(myRoad);
-	// 				b = intercept(myRoad, a);
-	// 				// heading = box.window.google.maps.geometry.spherical.computeHeading(
-	// 				// 	path[j],
-	// 				// 	path[j+1]
-	// 				// );
-	// 				// // map.setHeading(heading);
-	// 				// console.log(heading);
-	// 			}
-	// 		}
-	// 	}
-	// 	else {
-	// 		mainMarker.setPosition({ lat: currentPos.lat() - step, lng: a * currentPos.lat() + b });
-	// 		map.setCenter(mainMarker.getPosition());
-	// 		if (mainMarker.getPosition().lat() < myRoad[1].lat) { // het 1 doan
-	// 			console.log("het 1 doan NHO");
-	// 			j = j + 1;
-	// 			if (j >= path.length - 1) { // het ca doan
-	// 				console.log("het doan LON");
-	// 				j = 0;
-	// 				i = i + 1;
-	// 				if (i >= myRoute.steps.length) {	
-	// 					clearInterval(ratphuctap)
-	// 				}
-	// 				myRouteSegment = myRoute.steps[i];
-	// 				// ve path truoc 
-	// 				if (myRouteSegment) {
-	// 					path = myRouteSegment.path;
-	// 					new box.window.google.maps.Polyline({
-	// 						map: map,
-	// 						path: path,
-	// 						geodesic: true,
-	// 						strokeColor: "#45b6fe",
-	// 						strokeOpacity: 1.0,
-	// 						strokeWeight: 20,
-	// 					});
-	// 				}
-	// 			}
-	// 			if (myRouteSegment) {
-	// 				myRoad = [{ lat: path[j].lat(), lng: path[j].lng() },
-	// 				{ lat: path[j + 1].lat(), lng: path[j + 1].lng() }];
-	// 				a = slope(myRoad);
-	// 				b = intercept(myRoad, a);
-	// 				// heading = box.window.google.maps.geometry.spherical.computeHeading(
-	// 				// 	path[j],
-	// 				// 	path[j+1]
-	// 				// 	);
-	// 				// // map.setHeading(heading);
-	// 				// console.log(heading);
-	// 			}
-	// 		}
-	// 	}
-	// 	console.log("phong")
-	// }, 100);	
-	
-	// for (i = 0; i < myRoute.steps.length; i++) {
-	// 	const myRouteSegment = myRoute.steps[i];
-	// 	mainMarker.setPosition(myRouteSegment.start_location);
+		else {
+			mainMarker.setPosition({ lat: currentPos.lat() - step, lng: a * currentPos.lat() + b });
+			if (currentPos.lat() < myRoad[1].lat)
+			{
+				i = i + 1;
+				myRouteSegment = myRoute.steps[i];
+				if (myRouteSegment) {
+					path = myRouteSegment.path;
+					myRoad = [{ lat: myRouteSegment.start_location.lat(), lng: myRouteSegment.start_location.lng() },
+								{ lat: myRouteSegment.end_location.lat(), lng: myRouteSegment.end_location.lng()}];
+					a = slope(myRoad);
+					b = intercept(myRoad, a);
+					heading = box.window.google.maps.geometry.spherical.computeHeading(
+						myRoad[0],
+						myRoad[1]
+					);
+					mainMarker.setPosition(myRouteSegment.start_location);
+					map.setHeading(heading);
+					console.log("heading:" + heading);
+				}
+			}
+		}
+		if(i >= myRoute.steps.length) clearInterval(sieuphuctap)
+	}, 100);
+}
+function calculateRPM(speed){
+	let rpm = Math.round(speed*60/(7.2*Math.PI*0.25))
+	return rpm;
+}
+function setSpeed(value) {
+	if (value < 0 || value > 2) return;
 
-	// 	const heading = box.window.google.maps.geometry.spherical.computeHeading(
-	// 		myRouteSegment.start_location,
-	// 		myRouteSegment.end_location
-	// 	);
-	// 	map.setHeading(heading);
-	// 	const path = myRouteSegment.path;
-	// 	let route = new box.window.google.maps.Polyline({
-	// 		path: path,
-	// 		geodesic: true,
-	// 		strokeColor: "#45b6fe",
-	// 		strokeOpacity: 1.0,
-	// 		strokeWeight: 20,
-	// 	});
-	// 	route.setMap(map);
-	// 	let j = 0;
-	// 	const myInter = setInterval(() => {
-	// 		if (j >= path.length - 1)
-	// 			clearInterval(myInter);
-	// 		mainMarker.setPosition(path[j]);
-	// 		map.setCenter(path[j])
-	// 		j = j + 1;
-	// 		console.log("phong")
-	// 	}, 1000);
-	// }
-}
-function slope(myRoad) {
-	if (myRoad[0].lat == myRoad[1].lat) {
-		return null;
-	}
-	return (myRoad[1].lng - myRoad[0].lng) / (myRoad[1].lat - myRoad[0].lat);
-}
-function intercept(myRoad,slope) {
-	if (slope === null) {
-		// vertical line
-		return myRoad[0].lat;
-	}
-	return (myRoad[0].lng - slope * myRoad[0].lat);
-}
-
-
-function calculateRPM(value){
-	let rpm = Math.round(value*60/(7.2*Math.PI*0.25))
-	return rpm
-}
-function setSpeed(value){
-    if (value < 0 || value > 2) return;
-    
     const bg = speed.querySelector(".speed-container");
     const ovalline = bg.querySelector(".speed-oval-line");
     ovalline.querySelector(".speed-fill").style.transform = `rotate(${value/4}turn)`
@@ -611,6 +522,12 @@ function setSpeed(value){
 	}
 }
 
+socket.on("connected", (message) => {
+	myID = message;
+	control.querySelector("#user-status").innerHTML = message;
+});
+socket.emit("requestMarker", "Hello I am here");
+
 40.631663, -74.329692
 40.630410, -74.329131
 
@@ -640,12 +557,15 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 							routeArray[i].setMap(null);
 						}
 						mainMarker.setMap(null);
+						clearInterval(sieuphuctap);
 					}
 					path[0].lat = fromPosSplit[0];
 					path[1].lat = toPosSplit[0];
 					path[0].lng = fromPosSplit[1];
 					path[1].lng = toPosSplit[1];
+					setSpeed(0);
 					calculateAndDisplayRoute(box, path, map)
+					socket.emit("sendLocation", {id: myID, loc: currentPos});
 				}
 			}
 		});
@@ -655,23 +575,5 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 		});
 		box.injectNode(mainBoard);
 	})
-	let leftBtn = control.querySelector("#btn-turn-left")
-	if (leftBtn) {
-		leftBtn.addEventListener("click", () => {
-			console.log('leftBtn click')
-			// initialLeft = true;
-			// initialRight = false;
-			control.querySelector("#cnt").innerHTML = 'Turn Left';
-		})
-	}
-	let rightBtn = control.querySelector("#btn-turn-right")
-	if (rightBtn) {
-		rightBtn.addEventListener("click", () => {
-			console.log('rightBtn click')
-			// initialRight = true;
-			// initialLeft = false;
-			control.querySelector("#cnt").innerHTML = 'Turn right';
-		})
-	}
 }
 export default plugin;
