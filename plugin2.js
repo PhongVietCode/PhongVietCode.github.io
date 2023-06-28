@@ -35,6 +35,7 @@ let direction = 0; // -1: left,0: straing, 1: right
 let carNearby = new Map();
 let markerArray = [];
 let speedCar = 0;
+let distanceArray = [];
 let changeDirection = false;
 mainBoard.innerHTML =
 `
@@ -287,6 +288,9 @@ const GoogleMapsPluginApi = async (apikey, box) => {
 		while (carTable.rows.length > 1) {
 			carTable.deleteRow(1)
 		}
+		while (distanceArray.length >1){
+			distanceArray.pop();
+		}
 		for (let j = 0; j < anotherCar.length; j++){
 			let info = anotherCar[j];
 			if (info.id === myID || info.loc == null) continue;
@@ -300,7 +304,9 @@ const GoogleMapsPluginApi = async (apikey, box) => {
 			
 			var nameCell = newRow.insertCell();
 			nameCell.textContent = info.id;
-			
+
+			distanceArray.push({id : info.id, dis : distance});
+
 			var speedCell = newRow.insertCell();
 			speedCell.textContent = info.speed;
 			var direc = newRow.insertCell();
@@ -670,8 +676,51 @@ function senDataFunc() {
 		});
 	}
 }
-function checkCollision(anotherCarInfo) {
-	
+function checkCollision(anotherCarInfo,distanceArray) {
+	const count = anotherCarInfo.length;
+	for (let i = 1; i < count; i++) {
+		let info = anotherCarInfo[i];
+		if (info.id === myID || info.loc == null) continue;
+		if (haveColli == false) {
+			const dis = calculateDistance(currentPos.lat,currentPos.lng,info.loc.lat,info.loc.lng).toFixed(3);
+			const angle = calculateAngle(a, info.slope).toFixed(2);
+			const speed = info.speed;
+			if (deltaDistanceWithID(info.id, distanceArray, anotherCarInfo)){
+				if (dis < 7 && angle >80 && speed >0 && speedCar > 0){
+					if (direction == 0 && info.dir == 0){
+						haveColli = true;
+						console.log("Collided !!!")
+						// setWarning(cells[0].textContent);
+					}
+					if ((direction == 0 && info.dir ==1) || (direction == 0 && info.dir == -1)){
+						haveColli = true;
+						console.log("Collided !!!")
+					}
+					if ((direction == 1 && info.dir ==0) || (direction == -1 && info.dir == 0)){
+						haveColli = true;
+						console.log("Collided !!!")
+					}
+				}
+			}
+		}
+	}
+}
+function deltaDistanceWithID(id,distanceArray,anotherCarInfo) {
+	let info;
+	for (let i = 0; i < anotherCarInfo.length; i ++){
+		if (anotherCarInfo[i].id == id){
+			info = anotherCarInfo[i];
+		}
+	}
+	for (let i = 0; i< distanceArray.length;i++){
+		if (distanceArray[i].id === id){
+			let newDistance = calculateDistance(currentPos.lat,currentPos.lng,info.loc.lat,info.loc.lng)
+			if (newDistance < distanceArray[i].dis){
+				return true;
+			}
+			else return false;
+		}
+	}
 }
 let warningInterval = null;
 function sendWarning() {
@@ -752,7 +801,7 @@ function blinkingArrow(value) {
 		blinkInterval = setInterval(() => {
 			rightArrow.style.opacity = (rightArrow.style.opacity == '1') ? '0.3' : '1';
 			backLightRight.style.display = "block";
-			backLightRight.style.opacity = (rightArrow.style.opacity == '1') ? '0.5' : '1';
+			backLightRight.style.opacity = (backLightRight.style.opacity == '1') ? '0.5' : '1';
 
 		}, 300);
 		rightArrow.style.filter = "hue-rotate(-60deg)";
@@ -761,7 +810,7 @@ function blinkingArrow(value) {
 		blinkInterval = setInterval(() => {
 			leftArrow.style.opacity = (leftArrow.style.opacity == '1') ? '0.3' : '1';
 			backLightLeft.style.display = "block";
-			backLightLeft.style.opacity = (rightArrow.style.opacity == '1') ? '0.5' : '1';
+			backLightLeft.style.opacity = (backLightLeft.style.opacity == '1') ? '0.5' : '1';
 
 		}, 300);
 		leftArrow.style.filter = "hue-rotate(-60deg)";
