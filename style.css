@@ -62,6 +62,7 @@
     position: absolute;
     border-radius: 30px;
     transform: scale(0.97);
+    box-shadow: none;
 }
 .total-feature{
     width: 25%;
@@ -331,6 +332,12 @@
     margin-left:10px;
 
 }
+.rpm-arrow{
+    transform: rotate(-30deg);
+}
+.fuel-arrow{
+    transform: rotate(-30deg);
+}
 .fuel-meter-container{
     width: 45%;
     height: 100%;
@@ -404,7 +411,7 @@
     width: 97%;
     height: 96%;
     background-image: linear-gradient(to left,rgba(51, 51, 51, 1),rgba(51, 51, 51, 0.7));
-
+    box-shadow: none;
     margin: auto;
     border-radius: 20px;
     margin-right: 10px ;
