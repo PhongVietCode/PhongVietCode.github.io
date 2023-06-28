@@ -673,7 +673,35 @@ function senDataFunc() {
 function checkCollision(anotherCarInfo) {
 	
 }
+let warningInterval = null;
+function sendWarning() {
+	let meterObjStyle_1 = "-15px 15px 180px rgb(255, 0, 0)";
+	let featureContainerStyle_1 = "15px 15px 180px rgb(255, 0, 0)"
+	let meterObjStyle_2 = "-15px 15px 180px rgb(183, 74, 74)";
+	let featureContainerStyle_2 = "15px 15px 180px rgb(183, 74, 74)";
+	warningInterval = setInterval(() => {
+		if (meterObject.style.boxShadow == meterObjStyle_1){
+			meterObject.style.boxShadow = meterObjStyle_2;
+		}
+		else {
+			meterObject.style.boxShadow = meterObjStyle_1;
+		}
 
+		if (featureContainer.style.boxShadow == featureContainerStyle_1)
+		{
+			featureContainer.style.boxShadow = featureContainerStyle_2;
+		}
+		else {
+			featureContainer.style.boxShadow = featureContainerStyle_1;
+		}
+	}, 300);
+}
+function stopSendWarning() {
+	clearInterval(warningInterval);
+	warningInterval = null;
+	featureContainer.style.boxShadow = "";
+	meterObject.style.boxShadow = "";
+}
 socket.on("connected", (message) => {
 	myID = message;
 	control.querySelector("#user-status").innerHTML = message;
