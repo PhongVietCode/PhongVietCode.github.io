@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movement Control Table</title>
+  </head>
+  <body>
+    <link rel="stylesheet" href="test.css" />
+    <div class="control-bar">
+      <div class="emergency-container">
+        <button type="button" id="emergency-btn">Emergency</button>
+      </div>
+      <div class="button-box">
+        <div id="btn"></div>
+        <button type="button" class="toggle-btn" id="btn-turn-left">
+          Left
+        </button>
+        <button type="button" class="toggle-btn" id="btn-turn-right">
+          Right
+        </button>
+      </div>
+      <div class="speed-btn-container">
+        <button class="speed-btn" id="btn-speed-up">⇧</button>
+        <button class="speed-btn" id="btn-slown-down">⇩</button>
+      </div>
+      <div class="input-container">
+        <div class="user-input-route">
+            <input
+              class="input-form"
+              type="text"
+              id="from"
+              placeholder="Origin"
+            />
+            <input
+              class="input-form"
+              type="text"
+              id="to"
+              placeholder="Destination"
+            />
+          <button type="button" id="submit-btn" class="btn">
+            Submit your location
+          </button>
+        </div>
+      </div>
+        <div class="function-btn-container">
+          <div class="car-funtion">
+            <button class="function-btn" id="run-car">RUN CAR</button>
+            <button class="function-btn" id="stop-car">STOP CAR</button>
+          </div>
+          <div class="data-function">
+            <button class="function-btn" id="send-data">SEND DATA</button>
+            <button class="function-btn" id="stop-data">STOP DATA</button>
+          </div>
+        </div>
+      <p>You want to : <span id="cnt">...</span></p>
+    </div>
+    <script src="test.js"></script>
+  </body>
+</html>
