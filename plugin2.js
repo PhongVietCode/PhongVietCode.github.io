@@ -163,9 +163,12 @@ mainBoard.innerHTML =
 						<span >mins</span>
 					</div>
 					<div class="main-info-car">
-						<img src="http://127.0.0.1:5500/assest/mycar.png" style="scale: 80%">
+						<img src="http://127.0.0.1:5500/assest/headlight-whitebg.png" class = "light-system" style="scale: 10%;  transform: rotate(180deg); overflow: hidden; z-index: 1; position: absolute; top:-444px" >
+						<img src="http://127.0.0.1:5500/assest/mycar.png" style="scale: 80%; z-index: 2">
+						<img src="http://127.0.0.1:5500/assest/headlight-whitebg.png" class = "light-system backlight" style="scale: 3%;  transform: rotate(40deg); overflow: hidden; z-index: 1; position: absolute; top:-150px;left: -225%" >
+						<img src="http://127.0.0.1:5500/assest/headlight-whitebg.png" class = "light-system backlight" style="scale: 3%;  transform: rotate(325deg); overflow: hidden; z-index: 1; position: absolute; top:-150px; left: -200%" >
 						<span class="status">PARKING</span>
-					</div>    
+					</div>
 				</div>
 
 				<div class="nav">

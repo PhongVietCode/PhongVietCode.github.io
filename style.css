@@ -441,7 +441,15 @@
     align-items: center;
     justify-content: space-around;
 }
+.light-system{
+    filter: blur(100px);
+}
+.backlight{
+    filter:blur(200px);
+    border-radius: 0 50% 50% 0;
+}
 .main-info-car{
+    position: relative;
     display: flex;
     align-items: center;
     flex-direction: column;
