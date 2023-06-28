@@ -44,6 +44,7 @@ io.on('connection', (socket) => {
       return e.id;
     }).indexOf(socket.id);
     clientLocation.splice(index, 1);
+    socket.emit("disconnectClient", index);
     console.log("-----USER-SOCKET-ID-----")
     console.log(clientLocation)
     console.log("--------------------")
@@ -61,9 +62,9 @@ setInterval(() => {
   if (clientLocation.length > io.engine.clientsCount) {
     clientLocation = [];
   }
-  console.log("-----USER-SOCKET-ID-----")
-  console.log(clientLocation)
-  console.log("--------------------")
+  // console.log("-----USER-SOCKET-ID-----")
+  // console.log(clientLocation)
+  // console.log("--------------------")
 }, 3000)
 
 server.listen(3000, () => {
