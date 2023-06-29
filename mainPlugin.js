@@ -280,10 +280,10 @@ mainBoard.innerHTML =
 			</tr>
 		</table>
 	</div>
-	<audio controls id ="myAudio">
+	<audio controls id ="myAudio" preload="auto">
 		<source src="http://127.0.0.1:5500/Beep-3s.mp3" type="audio/mpeg">
 	</audio> 
-	<audio controls id ="myAudio1">
+	<audio controls id ="myAudio1" preload="auto">
 		<source src="http://127.0.0.1:5500/beep-01a.mp3" type="audio/mpeg">
 	</audio> 
 </div>
