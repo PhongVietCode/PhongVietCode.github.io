@@ -28,6 +28,6 @@ Our sever is in `index.js` file. Our plugin source code is in `mainPlugin.js`.
   yarn start 
 ```
 5. Run Live Sever in VSCode for the mainPlugin.js.
-6. Notice: First time collision may need to reload the page to load the mp3 file.
+6. Notice: Each browser should be displayed side by side.
   
   
