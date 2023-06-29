@@ -1,6 +1,6 @@
 # BetterLuck-Team
 ## This is repo for CodeRace2023 Challenge
-Our sever is in `index.js` file. Our plugin source code is in `plugin.js`.
+Our sever is in `index.js` file. Our plugin source code is in `mainPlugin.js`.
 
 ## Documentation
 0. Clone our repo:
@@ -27,6 +27,7 @@ Our sever is in `index.js` file. Our plugin source code is in `plugin.js`.
 ```
   yarn start 
 ```
-5. If the map doesn't load the right position: reload the page or check the sever
+5. Run Live Sever in VSCode for the mainPlugin.js.
+6. Notice: First time collision may need to reload the page to load the mp3 file.
   
   
