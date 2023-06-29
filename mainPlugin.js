@@ -49,7 +49,7 @@ let speedCar = 0;
 let changeDirection = false;
 let rpmNumber = 0, fuelNumber = 100;
 let randomValue = -1;
-
+let beforSpeed;
 mainBoard.innerHTML =
 `
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -457,7 +457,7 @@ const GoogleMapsPluginApi = async (apikey, box) => {
 			let angle = calculateAngle(a, info.slope).toFixed(2);
 			if(currentPos){
 				distance = calculateDistance(currentPos.lat, currentPos.lng, info.loc.lat, info.loc.lng).toFixed(3);
-				if (distance < 40 && angle > 40) {
+				if (distance < 30 && angle > 40) {
 					sendWarning(true);
 				}
 				else {
@@ -832,29 +832,30 @@ function checkCollision(anotherCarInfo) {
 		const angle = calculateAngle(a, info.slope).toFixed(2);
 		const speed = info.speed;
 		if (deltaDistanceWithID(info.id, distanceArray, anotherCarInfo)){
-			if (dis < 40 && angle > 40){ // && speed > 0 && speedCar > 0
+			if (dis < 30 && angle > 40){ // && speed > 0 && speedCar > 0
 				if ((direction == 0 && info.dir == 0) ||
 					(direction == 0 && info.dir == 1) || (direction == 0 && info.dir == -1) ||
 					(direction == 1 && info.dir == 0) || (direction == -1 && info.dir == 0)) {
 					haveColli = true;
 					sendWarning(true);
-
+					
 				}
 				else {
 					haveColli = false;
 					sendWarning(false);
-
+					
 				}
 			}
 			else {
 				haveColli = false;
 				sendWarning(false);
-
+				
 			}
 		}
 		else {
 			haveColli = false;
 			sendWarning(false);
+			
 		}
 	}
 }
@@ -899,12 +900,14 @@ function sendWarning(checkCo) {
 			featureContainer.style.boxShadow = featureContainerStyle_1;
 		}
 		myAudio.play();
+		setSpeed(0);
 	}
 	else {
 		console.log("No collide");
 		meterObject.style.boxShadow = "none";
 		featureContainer.style.boxShadow = "none";
 		myAudio.pause()
+		setSpeed(0.5);
 	}
 }
 socket.on("connected", (message) => {

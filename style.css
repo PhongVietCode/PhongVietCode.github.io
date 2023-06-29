@@ -513,6 +513,9 @@ table {
 .table{
     display: none;
 }
+.myAudio{
+    display: none;
+}
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
