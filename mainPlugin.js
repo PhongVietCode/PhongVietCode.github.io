@@ -283,6 +283,9 @@ mainBoard.innerHTML =
 	<audio controls id ="myAudio">
 		<source src="http://127.0.0.1:5500/Beep-3s.mp3" type="audio/mpeg">
 	</audio> 
+	<audio controls id ="myAudio1">
+		<source src="http://127.0.0.1:5500/beep-01a.mp3" type="audio/mpeg">
+	</audio> 
 </div>
 `
 
@@ -433,6 +436,8 @@ const leftArrow = leftContainer.querySelector('#left-arrow');
 const rightArrow = rightContainer.querySelector('#right-arrow');
 
 var myAudio = bg.querySelector("#myAudio");
+var myAudio1 = bg.querySelector("#myAudio1");
+
 
 const GoogleMapsPluginApi = async (apikey, box) => {
 	console.log("GoogleMapsPluginApi successfull")
@@ -462,7 +467,7 @@ const GoogleMapsPluginApi = async (apikey, box) => {
 			let angle = calculateAngle(a, info.slope).toFixed(2);
 			if(currentPos){
 				distance = calculateDistance(currentPos.lat, currentPos.lng, info.loc.lat, info.loc.lng).toFixed(3);
-				if (distance < 30 && angle > 40 && info.speed > 0 && speedCar > 0) {
+				if (distance < 20 && angle > 40 && info.speed > 0 && speedCar > 0) {
 					sendWarning(true);
 				}
 				else {
@@ -479,6 +484,10 @@ const GoogleMapsPluginApi = async (apikey, box) => {
 				}
 				else {
 					sendLightWarning(false);
+				}
+				if (distance > 50 && distance < 60) {
+					myAudio1.play();
+					myAudio1.volume = 0.7;
 				}
 			}
 
@@ -876,7 +885,7 @@ function checkCollision(anotherCarInfo) {
 				sendNormalWarning(false);
 				
 			}
-			if (dis < 30 && angle > 40 && speed > 0 && speedCar > 0){
+			if (dis < 20 && angle > 40 && speed > 0 && speedCar > 0){
 				if ((direction == 0 && info.dir == 0) ||
 					(direction == 0 && info.dir == 1) || (direction == 0 && info.dir == -1) ||
 					(direction == 1 && info.dir == 0) || (direction == -1 && info.dir == 0)) {
