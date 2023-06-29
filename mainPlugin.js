@@ -281,7 +281,7 @@ mainBoard.innerHTML =
 		</table>
 	</div>
 	<audio controls id ="myAudio">
-		<source src="http://127.0.0.1:5500/beep-01a.mp3" type="audio/mpeg">
+		<source src="http://127.0.0.1:5500/beep-3s.mp3" type="audio/mpeg">
 	</audio> 
 </div>
 `
@@ -963,6 +963,7 @@ function sendWarning(checkCo) {
 		haveColli = true;
 		for (let i = 0; i < 10; i++){	
 			myAudio.play();
+			myAudio.volume = .9;
 		}
 		beforSpeed = speedCar;
 		speedCar = 0;
