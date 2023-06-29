@@ -14,34 +14,18 @@
 }
 .container{
     display: flex;
-    width: 1504px;
+    width: 2000px;
     height: 834px;
     position: relative;
-    transform: scale(0.6);
+    transform: scale(0.6); 
     top: 50px;
-    left:100px;
+    left:-171px;
     border-width: 10px;
     border-radius: 30px;
     position: relative;
 }
 
-.control-bar{
-    background-color: #fff;
-    position: absolute;
-    top: 270px;
-    left: 1409px;
-    margin: 10px;
-}
-.user-input-route{
-    position: absolute;
-    border: 1px solid black;
-    text-align: center;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    line-height: 30px;
-    top:0;
-    padding: 10px;
-    left: 15%;
-}
+
 /* -----PART 1----- */  
 .google-map{
     width: 110%;
@@ -55,7 +39,7 @@
 .meter-object{
     /* background-color:  rgba(51, 51, 51, 1); */
     background-image: linear-gradient(to right,rgba(51, 51, 51, 1),rgba(51, 51, 51, 0.7));
-    width: 30%;
+    width: 23%;
     height: 834px;
     z-index: 5;
     left: 0;
@@ -65,13 +49,17 @@
     box-shadow: none;
 }
 .total-feature{
-    width: 25%;
+    width: 460px;
     height: 834px;
-    left: 75%;
+    left: 77%;
     position: absolute;
     z-index: 5;
 }
-
+.feature-container-info{
+    position: relative;
+    width: 100%;
+    height: 90%;
+}
 .meter-head{
     width: 100%;
     /* background-image: linear-gradient(to right,rgba(51, 51, 51, 1),rgba(51, 51, 51, 0.5)); */
@@ -416,7 +404,10 @@
     border-radius: 20px;
     margin-right: 10px ;
 }
-
+/* Car  */
+.car-info{
+    display: block;
+}
 .head-info{
     width: 100%;
     height: 5%;
@@ -434,6 +425,7 @@
 .main-info{
     width: 100%;
     height: 60%;
+    position: relative;
 }
 .main-info-container{
     display: grid;
@@ -472,10 +464,12 @@
     top: -63px;
 }
 .nav{
-    height: 27%;
+    bottom: 20px;
+    left: 5px;
     display: flex;
     align-items: flex-end;
     margin: 8px;
+    position: absolute;
 }
 .nav-car{
     list-style-type: none;
@@ -491,7 +485,7 @@ li a {
     display: block;
     color: #333;
     text-align: center;
-    padding: 12px 13px;
+    padding: 15px 21px;
     text-decoration: none;
     border-radius: 10px;
 }
@@ -525,3 +519,262 @@ tr:nth-child(even) {
     background-color: #dddddd;
 }
 
+/* User login ------------------- */
+.user-login{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    color: black;
+}
+.user-login-form{
+    margin-top: 50%;
+    width: 100%;
+    height: 45%;
+    text-align: center;
+}
+.user-login-form-text{
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 2em;
+    margin: 2px;
+    color: #fff;
+}
+.user-login-info{
+    width: 100%;
+}
+.input-box{
+    width: 75%;
+    height: 30px;
+    margin: 2px;
+    padding: 4px;
+    line-height: 30px;
+    border-radius: 7px;
+    background-color:aliceblue;
+    font-size: 1.1em;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+#user-login-info-btn{
+    font-size: 20px;
+    padding: 0.5em 2em;
+    border: transparent;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+    background: #333;
+    color: white;
+    border-radius: 4px;
+    width: 79%;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+#user-login-info-btn:hover {
+background: rgb(2,0,36);
+background: linear-gradient(90deg, #414141, rgb(114, 114, 115) 100%);
+}
+.check-box{
+    width: 90%;
+    margin-top:15px;
+    margin-left: 42px;
+    text-align: left;
+}
+#user-login-info-btn:active {
+transform: translate(0em, 0.2em);
+}
+/* User login ------------------- */
+/* Boardcast --------------------- */
+.boardcast-setting{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.boardcast-setting-btn{
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    background: #565454;
+    color: white;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.6em;
+    width: 70%;
+    height: 10%;
+    line-height: 20px;
+    text-align: center;
+    margin: 10px;
+}
+.boardcast-setting-info{
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    border-radius: 10px;
+    background-color: rgba(200, 193, 193,0.3);
+    text-align:center;
+} 
+.gradient {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
+}
+.label {
+    position: relative;
+    top: -1px;
+    font-size: 1.1em;
+}
+.transition {
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    transition-duration: 300ms;
+    background-color: rgba(177, 175, 175, 0.3);
+    /* border-radius: 9999px; */
+    width: 0;
+    height: 0;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+.boardcast-setting-priority{
+    background-color: #ebe8e8;
+    border-radius: 20px;
+    width: 75%;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 1.2em;
+}
+.boardcast-setting-emergency{
+    width: 100%;
+    height: 30px;
+    padding: 10px;
+    position: relative;
+    left: -10px;
+    font-size: 1.2em;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.boardcast-setting-btn:hover .transition {
+    width: 100%;
+    height: 100%;
+}
+.boardcast-setting-btn:hover .label {
+    font-size: 1.5em;
+}
+.boardcast-setting-btn:active {
+    transform: scale(0.97);
+}
+/* BoardCast Channell */
+/* Control bar --------------------------------- */
+.control-bar{
+    position: absolute;
+    top: 159px;
+    left: 1409px;
+    margin: 10px;
+    background-color: rgba(213, 242, 224, 0.9);
+    width: 400px;
+    height: 600px;
+    display: grid;
+    justify-content:start;
+    border-radius: 20px;
+    padding: 5px;
+    scale: 0.9;
+}
+.control-bar-title{
+    text-align: center;
+    font-size: 3.4em;
+    margin-left: 47%;
+}
+.user-input-route{
+    position: relative;
+    text-align: center;
+    line-height: 30px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 20px;
+    padding: 10px;
+    width: 140%;
+    margin-left: 15%;
+
+}
+.user-input-route-random{
+    background-color: #ebe8e8;
+    border-radius: 20px;
+}
+.user-input-route-box{
+    width: 90%;
+    height: 20px;
+    border-radius: 10px;
+    padding: 6px;
+    margin: 5px;
+    border: transparent;
+    background-color: rgba(255, 255, 255, 1);
+}
+.user-input-route-btn{
+    width: 90%;
+    height: 25px;
+    border-radius: 10px;
+    border-color: transparent;
+    font-size: 1.3em;
+}
+.control-bar-unit{
+    width: 140%;
+    height: 70%;
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgba(0, 0, 0, 50%);
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border-radius: 15px;
+    margin-left: 15%;
+}
+.control-bar-btn{
+    width: 49%;
+    height: 40px;
+    border-radius: 20px;
+    font-size: 1.1em;
+}
+.control-bar-unit-speed{
+    width: 140%;
+    display: flex;
+    flex-direction: column;
+}
+.control-bar-unit-speed-box{
+    width: 100%;
+    display: inline;
+}
+.speed-btn{
+    width: 49%;
+}
+.speed-btn:hover{
+    background-color: #fff;
+}
+.speed-btn:focus{
+    background-color: rgb(238, 211, 58);
+}
+.control-bar-btn:hover{
+    background: rgb(0,3,255);
+    background: linear-gradient(0deg, rgb(154, 196, 149) 0%, rgb(221, 227, 222) 100%);
+}
+.control-bar-text{
+    height: 40px;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    color: #d9d9d9;
+    font-weight: bold;
+}
+#cnt{
+    width: 100%;
+    text-align: center;
+}
+#user-status{
+    width: 100%;
+    text-align: center;
+}
