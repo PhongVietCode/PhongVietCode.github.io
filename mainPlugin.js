@@ -451,7 +451,13 @@ const GoogleMapsPluginApi = async (apikey, box) => {
 			let distance;
 			let angle = calculateAngle(a, info.slope).toFixed(2);
 			if(currentPos){
-				distance = calculateDistance(currentPos.lat,currentPos.lng,info.loc.lat,info.loc.lng).toFixed(3);
+				distance = calculateDistance(currentPos.lat, currentPos.lng, info.loc.lat, info.loc.lng).toFixed(3);
+				if (distance < 40 && angle > 40) {
+					sendWarning(true);
+				}
+				else {
+					sendWarning(false);
+				}
 			}
 
 			const newRow = carTable.insertRow();
@@ -809,7 +815,6 @@ setInterval(() => {
 },100)
 setInterval(() => {
 	checkCollision(anotherCarInfo);
-	sendWarning();
 }, 100);
 function checkCollision(anotherCarInfo) {
 	for (let i = 0; i < anotherCarInfo.length; i++) {
@@ -822,20 +827,28 @@ function checkCollision(anotherCarInfo) {
 		const angle = calculateAngle(a, info.slope).toFixed(2);
 		const speed = info.speed;
 		if (deltaDistanceWithID(info.id, distanceArray, anotherCarInfo)){
-			if (dis < 20 && angle > 40){ // && speed > 0 && speedCar > 0
+			if (dis < 40 && angle > 40){ // && speed > 0 && speedCar > 0
 				if ((direction == 0 && info.dir == 0) ||
 					(direction == 0 && info.dir == 1) || (direction == 0 && info.dir == -1) ||
-					(direction == 1 && info.dir == 0) || (direction == -1 && info.dir == 0) ) {
+					(direction == 1 && info.dir == 0) || (direction == -1 && info.dir == 0)) {
+					haveColli = true;
 					sendWarning(true);
 
 				}
 				else {
+					haveColli = false;
 					sendWarning(false);
 
 				}
 			}
+			else {
+				haveColli = false;
+				sendWarning(false);
+
+			}
 		}
 		else {
+			haveColli = false;
 			sendWarning(false);
 		}
 	}
@@ -859,35 +872,33 @@ function deltaDistanceWithID(id,distanceArray,anotherCarInfo) {
 		}
 	}
 }
-function sendWarning(haveColli) {
+function sendWarning(checkCo) {
 	let meterObjStyle_1 = "-15px 15px 180px rgb(255, 0, 0)";
 	let featureContainerStyle_1 = "15px 15px 180px rgb(255, 0, 0)"
 	let meterObjStyle_2 = "-15px 15px 180px rgb(183, 74, 74)";
 	let featureContainerStyle_2 = "15px 15px 180px rgb(183, 74, 74)";
-	warningInterval = setInterval(() => {
-		if (haveColli) { 
+	if (checkCo) { 
 			console.log("Set box shadow");
-			if (meterObject.style.boxShadow == meterObjStyle_1){
-				meterObject.style.boxShadow = meterObjStyle_2;
-			}
-			else {
-				meterObject.style.boxShadow = meterObjStyle_1;
-			}
-			
-			if (featureContainer.style.boxShadow == featureContainerStyle_1)
-			{
-				featureContainer.style.boxShadow = featureContainerStyle_2;
-			}
-			else {
-				featureContainer.style.boxShadow = featureContainerStyle_1;
-			}
+		if (meterObject.style.boxShadow == meterObjStyle_1){
+			meterObject.style.boxShadow = meterObjStyle_2;
 		}
 		else {
-			clearInterval(warningInterval);
-			meterObject.style.boxShadow = "0px 0px 0px transparent !important";
-			featureContainer.style.boxShadow = "0px 0px 0px transparent !important";
+			meterObject.style.boxShadow = meterObjStyle_1;
 		}
-	}, 300);
+		
+		if (featureContainer.style.boxShadow == featureContainerStyle_1)
+		{
+			featureContainer.style.boxShadow = featureContainerStyle_2;
+		}
+		else {
+			featureContainer.style.boxShadow = featureContainerStyle_1;
+		}
+	}
+	else {
+		console.log("No collide");
+		meterObject.style.boxShadow = "none";
+		featureContainer.style.boxShadow = "none";
+	}
 }
 socket.on("connected", (message) => {
 	myID = message;
@@ -984,7 +995,7 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 				rpmArrow.style.transform = `rotate(${-30}deg)`
 				fuelArrow.style.transform = `rotate(${fuelNumber * 2}deg)`
 				blinkingArrow(0);
-				sendWarning();
+				sendWarning(false);
 			}
 			else {
 				controlBartext.querySelector("#cnt").textContent = 'Choose location again';
@@ -1005,7 +1016,7 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 					controlBartext.querySelector("#cnt").textContent = "Must use lat, lng";
 				}
 				else {
-					sendWarning();
+					sendWarning(false);
 					submitted = true;
 					running = false;
 					stopping = false;
