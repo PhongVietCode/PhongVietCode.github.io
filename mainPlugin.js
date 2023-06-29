@@ -57,7 +57,6 @@ mainBoard.innerHTML =
 <div class="bg">
 	<div class ="container">
 		<div class = "google-map">
-            <img src ="https://th.bing.com/th/id/R.68adb561dcadf80f67de0f32a5c53d5b?rik=jimdahS9PKU1nQ&pid=ImgRaw&r=0" style="object-fit: fill;width: 100%; height: 100%;">
         </div>
 		<div class ="meter-object">
 			<div class = "meter-head">
