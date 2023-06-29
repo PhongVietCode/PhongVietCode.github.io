@@ -5,7 +5,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 
 const io = new Server(server, {
-  cors: ['https://digitalauto.netlify.app/model/YzJQXfPlhrHlgmi3cM0t/library/prototype/WJUzIMs8ye6uOajo3sTk/view/run']
+  cors: ['https://digitalauto.netlify.app/model/gvizddVi65gftkk3a1GO/library/prototype/6CfdPB3AMp0yoNPlC4D1/view/run']
 });
 let i = 0;
 let clientLocation = [];
@@ -52,7 +52,7 @@ io.on('connection', (socket) => {
 
   setInterval(function() {
     io.emit("addNearby", clientLocation);
-  }, 500)
+  }, 100)
 
   i = io.engine.clientsCount;
   console.log(`client: ${io.engine.clientsCount}`)
