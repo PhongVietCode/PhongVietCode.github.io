@@ -510,6 +510,9 @@ table {
     background-color: #dddddd;
     top: 50px;
 }
+.table{
+    display: none;
+}
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
