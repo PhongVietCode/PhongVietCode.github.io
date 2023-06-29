@@ -275,6 +275,9 @@ mainBoard.innerHTML =
 			</tr>
 		</table>
 	</div>
+	<audio controls id ="myAudio">
+		<source src="http://127.0.0.1:5500/beep-01a.mp3" type="audio/mpeg">
+	</audio> 
 </div>
 `
 
@@ -423,6 +426,8 @@ const leftContainer = iconContainer.querySelector(".turn-left");
 const rightContainer = iconContainer.querySelector(".turn-right");
 const leftArrow = leftContainer.querySelector('#left-arrow');
 const rightArrow = rightContainer.querySelector('#right-arrow');
+
+var myAudio = bg.querySelector("#myAudio");
 
 const GoogleMapsPluginApi = async (apikey, box) => {
 	console.log("GoogleMapsPluginApi successfull")
@@ -893,11 +898,13 @@ function sendWarning(checkCo) {
 		else {
 			featureContainer.style.boxShadow = featureContainerStyle_1;
 		}
+		myAudio.play();
 	}
 	else {
 		console.log("No collide");
 		meterObject.style.boxShadow = "none";
 		featureContainer.style.boxShadow = "none";
+		myAudio.pause()
 	}
 }
 socket.on("connected", (message) => {
