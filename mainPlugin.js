@@ -49,7 +49,12 @@ let speedCar = 0;
 let changeDirection = false;
 let rpmNumber = 0, fuelNumber = 100;
 let randomValue = -1;
-let beforSpeed;
+let beforSpeed =null;
+let fromRandom = false;
+let meterObjStyle_1 = "-15px 15px 180px rgb(255, 0, 0)";
+let featureContainerStyle_1 = "15px 15px 180px rgb(255, 0, 0)"
+let meterObjStyle_2 = "-15px 15px 180px rgb(183, 74, 74)";
+let featureContainerStyle_2 = "15px 15px 180px rgb(183, 74, 74)";
 mainBoard.innerHTML =
 `
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -457,11 +462,23 @@ const GoogleMapsPluginApi = async (apikey, box) => {
 			let angle = calculateAngle(a, info.slope).toFixed(2);
 			if(currentPos){
 				distance = calculateDistance(currentPos.lat, currentPos.lng, info.loc.lat, info.loc.lng).toFixed(3);
-				if (distance < 30 && angle > 40) {
+				if (distance < 30 && angle > 40 && info.speed > 0 && speedCar > 0) {
 					sendWarning(true);
 				}
 				else {
 					sendWarning(false);
+				}
+				if (distance < 50 && angle > 40 && info.speed > 0 && speedCar > 0) {
+					sendNormalWarning(true);
+				}
+				else {
+					sendNormalWarning(false);
+				}
+				if (distance < 90 && angle > 40 && info.speed > 0 && speedCar > 0) {
+					sendLightWarning(true);
+				}
+				else {
+					sendLightWarning(false);
 				}
 			}
 
@@ -797,18 +814,6 @@ function calculateAngle(m1, m2) {
 	if (rs < 0) rs = -rs;
 	return rs;
 }
-let connect;
-function senDataFunc() {
-	if (submitted) {
-		socket.emit("updateInfo", {
-			id: myID,
-			loc: currentPos,
-			slope: a,
-			dir: direction,
-			speed: speedCar*100,
-		});
-	}
-}
 setInterval(() => {
 	socket.emit("updateInfo", {
 		id: myID,
@@ -818,7 +823,7 @@ setInterval(() => {
 		speed: speedCar*100,
 	});
 },100)
-setInterval(() => {
+let checkCollInter = setInterval(() => {
 	checkCollision(anotherCarInfo);
 }, 100);
 function checkCollision(anotherCarInfo) {
@@ -831,8 +836,47 @@ function checkCollision(anotherCarInfo) {
 			 dis = calculateDistance(currentPos.lat,currentPos.lng,info.loc.lat,info.loc.lng).toFixed(3);
 		const angle = calculateAngle(a, info.slope).toFixed(2);
 		const speed = info.speed;
-		if (deltaDistanceWithID(info.id, distanceArray, anotherCarInfo)){
-			if (dis < 30 && angle > 40){ // && speed > 0 && speedCar > 0
+		if (deltaDistanceWithID(info.id, distanceArray, anotherCarInfo)) {
+			if (dis < 100 && angle > 40 && speed > 0 && speedCar > 0){
+				if ((direction == 0 && info.dir == 0) ||
+					(direction == 0 && info.dir == 1) || (direction == 0 && info.dir == -1) ||
+					(direction == 1 && info.dir == 0) || (direction == -1 && info.dir == 0)) {
+					haveColli = true;
+					sendLightWarning(true);
+					
+				}
+				else {
+					haveColli = false;
+					sendLightWarning(false);
+					
+				}
+			}	
+			else {
+				haveColli = false;
+				sendLightWarning(false);
+
+				
+			}
+			if (dis < 60 && angle > 40 && speed > 0 && speedCar > 0){
+				if ((direction == 0 && info.dir == 0) ||
+					(direction == 0 && info.dir == 1) || (direction == 0 && info.dir == -1) ||
+					(direction == 1 && info.dir == 0) || (direction == -1 && info.dir == 0)) {
+					haveColli = true;
+					sendNormalWarning(true);
+					
+				}
+				else {
+					haveColli = false;
+					sendNormalWarning(false);
+					
+				}
+			}
+			else {
+				haveColli = false;
+				sendNormalWarning(false);
+				
+			}
+			if (dis < 30 && angle > 40 && speed > 0 && speedCar > 0){
 				if ((direction == 0 && info.dir == 0) ||
 					(direction == 0 && info.dir == 1) || (direction == 0 && info.dir == -1) ||
 					(direction == 1 && info.dir == 0) || (direction == -1 && info.dir == 0)) {
@@ -879,12 +923,29 @@ function deltaDistanceWithID(id,distanceArray,anotherCarInfo) {
 	}
 }
 function sendWarning(checkCo) {
-	let meterObjStyle_1 = "-15px 15px 180px rgb(255, 0, 0)";
-	let featureContainerStyle_1 = "15px 15px 180px rgb(255, 0, 0)"
-	let meterObjStyle_2 = "-15px 15px 180px rgb(183, 74, 74)";
-	let featureContainerStyle_2 = "15px 15px 180px rgb(183, 74, 74)";
+	if (speedCar < 0.2) {
+		if (haveColli) {		
+				if (meterObject.style.boxShadow == meterObjStyle_1){
+					meterObject.style.boxShadow = meterObjStyle_2;
+			}
+			else {
+				meterObject.style.boxShadow = meterObjStyle_1;
+			}
+			
+			if (featureContainer.style.boxShadow == featureContainerStyle_1)
+			{
+				featureContainer.style.boxShadow = featureContainerStyle_2;
+			}
+			else {
+				featureContainer.style.boxShadow = featureContainerStyle_1;
+			}
+		}
+		return;
+	}
+	sendNormalWarning(false);
+
 	if (checkCo) { 
-			console.log("Set box shadow");
+		
 		if (meterObject.style.boxShadow == meterObjStyle_1){
 			meterObject.style.boxShadow = meterObjStyle_2;
 		}
@@ -899,15 +960,83 @@ function sendWarning(checkCo) {
 		else {
 			featureContainer.style.boxShadow = featureContainerStyle_1;
 		}
-		myAudio.play();
+		haveColli = true;
+		for (let i = 0; i < 10; i++){	
+			myAudio.play();
+		}
+		beforSpeed = speedCar;
+		speedCar = 0;
 		setSpeed(0);
 	}
 	else {
-		console.log("No collide");
+		haveColli = false;
 		meterObject.style.boxShadow = "none";
 		featureContainer.style.boxShadow = "none";
-		myAudio.pause()
-		setSpeed(0.5);
+		myAudio.pause();
+	}
+}
+function sendNormalWarning(checkCo) {
+	if (speedCar <= 0.2) {
+		return
+	}
+	sendLightWarning(false);
+	let meterObjStyle_1 = "-15px 15px 180px rgb(243, 228, 9)";
+	let featureContainerStyle_1 = "15px 15px 180px rgb(243, 228, 9)"
+	let meterObjStyle_2 = "-15px 15px 180px rgb(209, 220,  153)";
+	let featureContainerStyle_2 = "15px 15px 180px rgb(209, 220,  153)";
+	if (checkCo) { 
+		if (meterObject.style.boxShadow == meterObjStyle_1){
+			meterObject.style.boxShadow = meterObjStyle_2;
+		}
+		else {
+			meterObject.style.boxShadow = meterObjStyle_1;
+		}
+		
+		if (featureContainer.style.boxShadow == featureContainerStyle_1)
+		{
+			featureContainer.style.boxShadow = featureContainerStyle_2;
+		}
+		else {
+			featureContainer.style.boxShadow = featureContainerStyle_1;
+		}
+		beforSpeed = speedCar;
+		speedCar = 0.2;
+		setSpeed(0.2);
+	}
+	else {
+		meterObject.style.boxShadow = "none";
+		featureContainer.style.boxShadow = "none";
+		if (beforSpeed) {
+			speedCar = beforSpeed;	
+			setSpeed(beforSpeed);
+			beforSpeed = null;
+		}
+	}
+}
+function sendLightWarning(checkCo) {
+	let meterObjStyle_1 = "-15px 15px 180px rgb(66, 248,10)";
+	let featureContainerStyle_1 = "15px 15px 180px rgb(66, 248,10)"
+	let meterObjStyle_2 = "-15px 15px 180px rgb(188, 242, 173)";
+	let featureContainerStyle_2 = "15px 15px 180px rgb(188, 242, 173)";
+	if (checkCo) { 
+		if (meterObject.style.boxShadow == meterObjStyle_1){
+			meterObject.style.boxShadow = meterObjStyle_2;
+		}
+		else {
+			meterObject.style.boxShadow = meterObjStyle_1;
+		}
+		
+		if (featureContainer.style.boxShadow == featureContainerStyle_1)
+		{
+			featureContainer.style.boxShadow = featureContainerStyle_2;
+		}
+		else {
+			featureContainer.style.boxShadow = featureContainerStyle_1;
+		}
+	}
+	else {
+		meterObject.style.boxShadow = "none";
+		featureContainer.style.boxShadow = "none";
 	}
 }
 socket.on("connected", (message) => {
@@ -928,7 +1057,6 @@ function blinkingArrow(value) {
 			leftArrow.style.filter = ""
 			backLightLeft.style.display = "none";
 			backLightRight.style.display = "none";
-
 		}
 	}
 	else if (value == 1) {
@@ -976,7 +1104,9 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 		GoogleMapsPluginApi(PLUGINS_APIKEY, box);
 		selectinputRandom.onchange = function () {
 			console.log(selectinputRandom.value);
+			speedCar = 0;
 			if (selectinputRandom.value != -1) {
+				fromRandom = true;
 				path = baseRoute[selectinputRandom.value -1];
 				submitted = true;
 				running = false;
@@ -1026,6 +1156,7 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 					controlBartext.querySelector("#cnt").textContent = "Must use lat, lng";
 				}
 				else {
+					fromRandom = false;
 					sendWarning(false);
 					submitted = true;
 					running = false;
@@ -1062,6 +1193,35 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 			}
 		});
 		runCar.addEventListener("click", () => {
+			if (haveColli) {
+				running = true;
+				stopping = false;
+				meterObject.style.boxShadow = "none";
+				featureContainer.style.boxShadow = "none";
+				clearInterval(checkCollInter);
+				speedCar = 0.5;
+			}
+			else {
+				checkCollInter = setInterval(() => {
+					checkCollision(anotherCarInfo);
+				}, 100);
+			}
+			if (fromRandom)
+			{
+				if (running) {
+					setInterval(runInterval, 100);
+				}
+				else {
+					runMyCar(routeResult, map, box);
+					i = 0;
+				}
+				status.innerHTML = "DRIVING";
+				if(speedCar == 0)
+					speedCar = 0.5;
+				setSpeed(speedCar);
+				rpmArrow.style.transform = `rotate(${rpmNumber/10}deg)`
+				fuelArrow.style.transform = `rotate(${fuelNumber * 2}deg)`
+			}
 			if (submitted) {
 				if (stopping) {
 					running = true; // here still fail
@@ -1078,6 +1238,7 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 				status.innerHTML = "DRIVING";
 				if(speedCar == 0)
 					speedCar = 0.5;
+				if(beforSpeed) speedCar = 0.5
 				setSpeed(speedCar);
 				rpmArrow.style.transform = `rotate(${rpmNumber/10}deg)`
 				fuelArrow.style.transform = `rotate(${fuelNumber * 2}deg)`
@@ -1087,6 +1248,7 @@ const plugin = ({ widgets, simulator, vehicle }) => {
 		stopCar.addEventListener("click", () => {
 			running = false;
 			stopping = true;
+			fromRandom = false;
 			speedCar = 0;
 			rpmArrow.style.transform = `rotate(${-30}deg)`
 			setSpeed(0);
