@@ -281,7 +281,7 @@ mainBoard.innerHTML =
 		</table>
 	</div>
 	<audio controls id ="myAudio">
-		<source src="http://127.0.0.1:5500/beep-3s.mp3" type="audio/mpeg">
+		<source src="http://127.0.0.1:5500/Beep-3s.mp3" type="audio/mpeg">
 	</audio> 
 </div>
 `
@@ -981,10 +981,6 @@ function sendNormalWarning(checkCo) {
 		return
 	}
 	sendLightWarning(false);
-	let meterObjStyle_1 = "-15px 15px 180px rgb(243, 228, 9)";
-	let featureContainerStyle_1 = "15px 15px 180px rgb(243, 228, 9)"
-	let meterObjStyle_2 = "-15px 15px 180px rgb(209, 220,  153)";
-	let featureContainerStyle_2 = "15px 15px 180px rgb(209, 220,  153)";
 	if (checkCo) { 
 		if (meterObject.style.boxShadow == meterObjStyle_1){
 			meterObject.style.boxShadow = meterObjStyle_2;
@@ -1015,10 +1011,6 @@ function sendNormalWarning(checkCo) {
 	}
 }
 function sendLightWarning(checkCo) {
-	let meterObjStyle_1 = "-15px 15px 180px rgb(66, 248,10)";
-	let featureContainerStyle_1 = "15px 15px 180px rgb(66, 248,10)"
-	let meterObjStyle_2 = "-15px 15px 180px rgb(188, 242, 173)";
-	let featureContainerStyle_2 = "15px 15px 180px rgb(188, 242, 173)";
 	if (checkCo) { 
 		if (meterObject.style.boxShadow == meterObjStyle_1){
 			meterObject.style.boxShadow = meterObjStyle_2;
